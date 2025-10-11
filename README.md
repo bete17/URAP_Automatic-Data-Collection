@@ -1,8 +1,18 @@
 # Automating Data Collection
-Automating Data Collection using Python and the SEC API. Using Python to gather the information directly from 10-Ks via the SEC API. This method will first be tested against our manually collected data before we use it to process the remaining companies in our 20,000+ sample.
-Takes in User input \[company name, fiscal year] and then write out all the content from ITEM 7 of the 10-k form and put it into a .txt file which will be saved in the same location where the code file is run from.
+A Python project for extracting and analyzing restructuring-related disclosures from SEC 10-K filings.
+This tool uses the EDGAR API to retrieve company filings, extract Item 7 (Management’s Discussion & Analysis) and Item 8 (Financial Statements), and filter for text specifically related to restructuring activities.
 
+##🚀 Project Goals
 
+Automatically fetch 10-K filings from the SEC’s EDGAR database.
+
+Parse and isolate Item 7 and Item 8 sections.
+
+Identify sentences discussing restructuring, realignment, severance, and related activities.
+
+Output structured snippets for later testing against manually collected datasets.
+
+Serve as a foundation for an NLP model to evaluate disclosure accuracy and completeness.
 
 1. Obtain CIK with company name
 2. Choose 10-k with CIK and Fiscal Year
