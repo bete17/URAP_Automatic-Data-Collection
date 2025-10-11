@@ -6,7 +6,6 @@ import os
 #URLS
 SEC_BASE = "https://data.sec.gov"
 ARCHIVES_BASE = "https://www.sec.gov/Archives"
-USER_AGENT = os.environ.get("SEC_USER_AGENT", "Your Name your@email")
 headers = {"User-Agent": "brucetan@berkeley.edu"}
 
 class Extractor:
