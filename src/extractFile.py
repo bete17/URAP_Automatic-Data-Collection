@@ -4,7 +4,7 @@ import os
 import time
 from bs4 import BeautifulSoup
 
-from dataclass import FillingMeta, ItemSections
+from Code.src.dataclass import FilingMeta, ItemSections
 
 
 #URLS
@@ -47,7 +47,7 @@ class Extractor:
     def get_submissions(self, cik : str) -> dict:
     #Fetch the SEC submission for a company cik
         url = f"{SEC_BASE}/submissions/CIK{str(int(cik)).zfill(10)}.json"
-        r = requests.get(url, headers=HEADERS, timeout=30)
+        r = requests.get(url, headers=self.header, timeout=30)
         r.raise_for_status()
         return r.json()
     
@@ -72,7 +72,7 @@ class Extractor:
         # First pass: prefer reportDate match (when present)
         for form, acc, doc, rdate, fdate in zip(forms, accessions, primary_docs, report_dates, filing_dates):
             if ok(form) and rdate and str(rdate).startswith(str(fiscal_year)):
-                return self._build_meta(company, cik, fiscal_year, form, acc, doc, rdate, fdate)
+                return self._build_meta(company, self.cik, fiscal_year, form, acc, doc, rdate, fdate)
 
         # Fallback: filingDate match
         for form, acc, doc, rdate, fdate in zip(forms, accessions, primary_docs, report_dates, filing_dates):
