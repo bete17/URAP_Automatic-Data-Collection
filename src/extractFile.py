@@ -83,7 +83,7 @@ class Extractor:
     
     @staticmethod
     def _build_meta(company: str, cik: str, fiscal_year: int, form: str, accession: str, primary_doc: str,
-                    report_date: Optional[str], filing_date: Optional[str]) -> FilingMeta:
+                    report_date: str, filing_date: str) -> FilingMeta:
         is_amend = form.upper() == "10-K/A"
         acc_nodash = accession.replace("-", "")
         url = f"{ARCHIVES_BASE}/edgar/data/{int(cik)}/{acc_nodash}/{primary_doc}"
