@@ -14,3 +14,31 @@ BLOCK_TAGS = ("h1","h2","h3","h4","h5","h6","p","div","span","b","strong","font"
 class Extract_Restructure:
     def __init__(self):
         pass
+    
+    def extract_items(self, html):
+        #Locate Item 7 & 8 on the html page
+        None
+        
+    def stream_blocks(self, meta : ItemSections)
+        #Transform/Normalize item sections for simplicity (easier to analyze)
+        None
+    
+    def score_block(self, block):
+        #Give a score to a block based on relevancy to restructuring
+        None
+    
+    def is_restructuring(self,block):
+        #Determine if a block is about restructuring
+        None
+        
+    def capture_hits(self, wanted_blocks):
+        #Aggregate all relevant blocks within one section.
+        None
+    
+    def merge_adjacent(self, blocks):
+        #Merge adjacent blocks into one larger block.
+        None
+    
+    def write_out(self, hits, filepath):
+        #Write the extracted sections to an output file.
+        None
