@@ -23,6 +23,6 @@ class ItemSections:
     """
     Holds the extracted text for Item 7 and Item 8 of a 10-K.
     """
-    item_7: Optional[str]
-    item_8: Optional[str]
+    item7_html: Optional[str]
+    item8_html: Optional[str]
     source_url: Optional[str] = None
