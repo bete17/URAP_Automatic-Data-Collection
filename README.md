@@ -32,16 +32,18 @@ Extract_File.py	: Fetch the 10k File
 
 Extract_Items.py : Fetch item 7 & 8 and extract the information we need
 
-main.py :	Example script showing how to run the extractor for a specific company and year.
+main.py :	To pilot test the code
 
 ### Unittest
+#### Core Idea --> Be able to check that the code can run through all 20,000 companies and get the right information.
+
 sample_data : Datas we need to evaluate our code, test our model and get CIK (JSON, CSV, .txt)
 
 test_clean_name 
 
 test_get_cik 
 
-test_get_file = check if we get the right 10k or not
+test_get_file = check if we get the right 10k or not, also test it using 20,000 sample.
 
 test_get_item = check item 7 and 8
 
