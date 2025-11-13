@@ -7,7 +7,7 @@ import pandas as pd
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(os.path.join(ROOT, "src"))
 
-from Extract_File import Extractor
+from filing import Extractor
 from dataclass import FilingMeta
 
 class TestExtractor(unittest.TestCase):
