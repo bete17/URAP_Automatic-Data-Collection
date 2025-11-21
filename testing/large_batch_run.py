@@ -20,8 +20,6 @@ def validate_10k_html(html: str) -> bool:
     lower = html.lower()
     if len(lower) < 5000:
         return False  # too small to be a full 10-K
-    if "form 10-k" not in lower and "form 10 k" not in lower:
-        return False
     return True
 
 def main(max_rows=None):
