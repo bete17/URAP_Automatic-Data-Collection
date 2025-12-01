@@ -125,12 +125,16 @@ class Extract_Restructure:
         #Take item 7 and 8 from the html document
         soup = BeautifulSoup(html, 'html.parser')
 
-        item7_text = self.stream_until_stop(self.find_item7_tag(soup))
-        item8_text = self.stream_until_stop(self.find_item8_tag(soup))
+        item7_blocks = self.stream_until_stop(self.find_item7_tag(soup))
+        item8_blocks= self.stream_until_stop(self.find_item8_tag(soup))
 
-        return item7_text, item8_text
+        return ItemSections(
+            item7_blocks=item7_blocks,
+            item8_blocks=item8_blocks,
+            source_url=None,
+        )
         
-    def stream_blocks(self, items_txt):
+    def stream_blocks(self, blocks: List[Block]):
         #Transform/Normalize item sections for simplicity (easier to analyze)
         
         None
