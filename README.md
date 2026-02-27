@@ -1,54 +1,32 @@
-# Automating Data Collection
-A Python project for extracting and analyzing restructuring-related disclosures from SEC 10-K filings.
-This tool uses the EDGAR API to retrieve company filings, extract Item 7 (Management’s Discussion & Analysis) and Item 8 (Financial Statements), and filter for text specifically related to restructuring activities.
+# Project Description
+We want to collect data of 20,000+ companies and we need to automate that process instead of manually collecting it. We can use the SEC API to obtain our 10-k files and then run it through an algorithm that captures restructuring related information. With these information we will feed it to an LLM and then use the LLM to answer our list of questions and that will be our final complete data set.
 
-## 🚀 Project Goals
+## Data
+All the data that is either used for testing or querying.
 
-1.Automatically fetch 10-K filings from the SEC’s EDGAR database.
+sample_all.csv : All the desired companies that we want to collect.
 
-2.Parse and isolate Item 7 and Item 8 sections.
+sample_collect_2025Fall.csv : All the companies that we manually collected (just 50 of them from top to bottom).
 
-3.Identify sentences discussing restructuring, realignment, severance, and related activities.
+10k_filing_info : This is where we store all the companies meta data needed to build each 10-k URL. This can be build with the build_filling.py in SRC. 
 
-4.Output structured snippets for later testing against manually collected datasets.
+The file above is needed for better run time in getting the 10-k.
 
-5.Serve as a foundation for an NLP model to evaluate disclosure accuracy and completeness.
+## SRC
+dataclasses.py :	Holds an instance of classes like items, block (paragraphs) and Filing meta data. 
 
-## Workflow
-1. Retrieve meta data from submission file
+filing.py	: Fetch the 10k File.
 
-2. Fetch 10-k and locate item 7 and 8
+items.py : Fetch item 7 & 8 and extract from each the restructuring information.
 
-3. Pick out restructuring information from item 7 and 8
-   
-4. Feed to LLM then generate answers
+main.py : To pilot the code and build our final dataset.
 
-## Classes
+## Testing
+test_filing : Verify that we have the right 10-k.
 
-### Extractor
-dataclasses.py :	Defines FilingMeta, ItemSections, and Snippet dataclasses used throughout the pipeline.
+test_item : Verify that we have the right item 7 and 8.
 
-Extract_File.py	: 
-1. For each CIK 
+test_restructuring : Compare the results between our manual collection and automatic collection.
 
-Extract_Items.py : Fetch item 7 & 8 and extract the information we need
+test_LLM : verify the results of the LLM and our manual answers.
 
-main.py :	To pilot test the code
-
-### Unittest
-#### Core Idea --> Be able to check that the code can run through all 20,000 companies and get the right information.
-
-sample_data : Datas we need to evaluate our code, test our model and get CIK (JSON, CSV, .txt)
-
-test_clean_name 
-
-test_get_cik 
-
-test_get_file = check if we get the right 10k or not, also test it using 20,000 sample.
-
-test_get_item = check item 7 and 8
-
-### Note
-
-“The file data/company_tickers.json was downloaded from https://www.sec.gov/files/company_tickers.json
- on [DATE].”
