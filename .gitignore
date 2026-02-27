@@ -209,6 +209,8 @@ data/
 # ignore all data by default
 data/*
 
+# but keep these
+!data/submission_info.csv
 
 # if you also want to keep folders that contain kept files:
 !data/data/
