@@ -9,10 +9,6 @@ from dataclass import ItemSections, Block
 
 class Extract_Restructure:
     
-    #Constructor
-    def __init__(self, ten_k):
-        self.ten_k = ten_k
-    
     # Normalize text
     @staticmethod
     def _norm(s: str) -> str:

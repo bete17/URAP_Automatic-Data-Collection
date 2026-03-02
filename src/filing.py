@@ -8,20 +8,20 @@ from dataclass import FilingMeta
 # Intance variables
 SEC_BASE = "https://data.sec.gov"
 ARCHIVES_BASE = "https://www.sec.gov/Archives"
-
 VALID_10K_FORMS = {"10-K", "10-k"}
 
 
 class Extract_Filing:
-    submissions = pd.read_csv("data/10k_filing_info.csv", dtype={"cik": str})
+
     
     #Constructor
-    def __init__(self, cik, fiscal_year, company, timeout=30, max_retries=3, retry_sleep=0.5):
+    def __init__(self, cik, fiscal_year, company, submission_filepath, timeout=30, max_retries=3, retry_sleep=0.5):
         self.header = {"User-Agent": "iamaudreylin@gmail.com"}
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_sleep = retry_sleep
         self.cik = str(int(cik)).zfill(10)
+        self.submission_filepath = submission_filepath
         self.fiscal_year = int(fiscal_year)
         self.company = str(company)
         
@@ -74,9 +74,10 @@ class Extract_Filing:
         )
     
     def get_submission(self) -> list[FilingMeta]:
+        filepath = self.submission_filepath
         cik = self.cik
         fiscal_year = self.fiscal_year
-        df = self.submissions
+        df = pd.read_csv(filepath, dtype={"cik": str})
         df = df[df['cik'] == cik]
         df = df[df['fiscal_year'] == fiscal_year] # what if none found?
         

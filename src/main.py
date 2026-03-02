@@ -6,13 +6,11 @@ import pandas as pd
 import os
 
 def main():
-    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    DATA_PATH = os.path.join(ROOT, "data", "sample_all.csv")
     
 
     filing = Extract_Filing("0000001750", fiscal_year=2018, company="AIR")
-    item = Extract_Restructure()
     html = filing.get_html()
+    item = Extract_Restructure()
     
     print(item.get_restructure(html))
     
