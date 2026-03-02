@@ -1,4 +1,3 @@
-# item_extractor.py
 import os
 import csv
 import re
@@ -14,10 +13,9 @@ class Extract_Restructure:
     def __init__(self, ten_k):
         self.ten_k = ten_k
     
-    #------------------- Helper Functions -----------------------###
+    # Normalize text
     @staticmethod
     def _norm(s: str) -> str:
-        # Normalize text
         s = (s or "").replace("\xa0", " ")
         s = re.sub(r"[\s–—\-:._]+", " ", s, flags=re.UNICODE)
         return s.strip()
