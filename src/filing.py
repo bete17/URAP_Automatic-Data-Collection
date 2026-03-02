@@ -15,8 +15,8 @@ class Extract_Filing:
 
     
     #Constructor
-    def __init__(self, cik, fiscal_year, company, submission_filepath, timeout=30, max_retries=3, retry_sleep=0.5):
-        self.header = {"User-Agent": "iamaudreylin@gmail.com"}
+    def __init__(self, user_agent, cik, fiscal_year, company, submission_filepath, timeout=30, max_retries=3, retry_sleep=0.5):
+        self.header = {"User-Agent": user_agent}
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_sleep = retry_sleep

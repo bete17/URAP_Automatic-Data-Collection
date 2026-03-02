@@ -8,7 +8,7 @@ import os
 def main():
     
 
-    filing = Extract_Filing("0000001750", fiscal_year=2018, company="AIR")
+    filing = Extract_Filing(user_agent = "bruce0tan@gmail.com",cik ="0000001750", fiscal_year=2018, company="AIR", submission_filepath = "data/submission_info.csv")
     html = filing.get_html()
     item = Extract_Restructure()
     
