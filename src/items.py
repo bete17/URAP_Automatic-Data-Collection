@@ -9,28 +9,20 @@ from dataclass import ItemSections, Block
 
 
 class Extract_Restructure:
-    #Constructor
-    keywords = ["restructuring",
-                "reorganization",
-                "special charge",
-                "realignment",
-                "repositioning",
-                "asset impairment",
-                "layoff cost",
-                "employee termination",
-                "workforce reduction"
-    ]
     
-    def __init__(self):
-        pass
+    #Constructor
+    def __init__(self, ten_k):
+        self.ten_k = ten_k
     
     #------------------- Helper Functions -----------------------###
     @staticmethod
     def _norm(s: str) -> str:
+        # Normalize text
         s = (s or "").replace("\xa0", " ")
         s = re.sub(r"[\s–—\-:._]+", " ", s, flags=re.UNICODE)
         return s.strip()
     
+    #Read through the document until next item
     @staticmethod
     def stream_until_stop(start_tag):
         blocks: List[Block] = []
@@ -77,6 +69,7 @@ class Extract_Restructure:
     
     def find_item7_tag(self, soup):
         candidates = []
+        #find all the relevant tags
         for b in soup.find_all(["b", "strong"]):
             txt = b.get_text(" ", strip=True)
             if re.match(r"^\s*item\s*7\b", txt, re.I):
@@ -112,12 +105,14 @@ class Extract_Restructure:
             if tag.find_parent(["ul", "ol", "table"]):
                 continue
 
-            # slice forward until 7A/8/9
+            # slice forward until item 9
             collected = Extract_Restructure.stream_until_stop(tag)
             # find the tag with the most content
             if len(collected) > best_len:
                 best_tag, best_len = tag, len(collected)
-            # when its in a different page
+            
+            # if item 8 is on a different page
+            
             
         return best_tag
     
@@ -138,7 +133,7 @@ class Extract_Restructure:
         )
         
     def stream_blocks(self, blocks: List[Block]):
-        #Transform/Normalize item sections for simplicity (easier to analyze)
+        #Transform/Normalize item sections for simplicity
         for block in blocks:
             if block.type == "paragraph":
                 block.text = self._norm(block.text)
@@ -155,7 +150,17 @@ class Extract_Restructure:
         None
     
     def is_restructuring(self, blocks):
-        kws = [k.lower().strip() for k in self.keywords if k]
+        keywords = ["restructuring",
+                "reorganization",
+                "special charge",
+                "realignment",
+                "repositioning",
+                "asset impairment",
+                "layoff cost",
+                "employee termination",
+                "workforce reduction"
+            ]
+        kws = [k.lower().strip() for k in keywords if k]
         if not kws:
             return False
 
