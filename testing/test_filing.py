@@ -8,14 +8,14 @@ from unittest.mock import patch, MagicMock
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(os.path.join(ROOT, "src"))
 
-from filing import Extractor
+from filing import Extract_Filing
 from dataclass import FilingMeta
 
 class Testfiling(unittest.TestCase):
     
     def test_get_submission(self):
         # Arrange
-        extractor = Extractor("0000001750")
+        extractor = Extract_Filing("0000001750")
         cik = "0000001750"  # Example CIK for testing
 
         # Act
@@ -27,7 +27,7 @@ class Testfiling(unittest.TestCase):
         
     def test_build_meta(self):
         # Arrange
-        extractor = Extractor("0000001750")
+        extractor = Extract_Filing("0000001750")
         company = "AIR"
         cik = "0000001750"
         fiscal_year = 2019
@@ -49,7 +49,7 @@ class Testfiling(unittest.TestCase):
         
     def test_choose_10k(self):
         # Arrange
-        extractor = Extractor("0000061478")
+        extractor = Extract_Filing("0000061478")
         company = "ADC TELECOMMUNICATIONS INC"
         submissions = extractor.get_submissions()
         fiscal_year = 2002
@@ -65,7 +65,7 @@ class Testfiling(unittest.TestCase):
         
     def test_fetch_10k(self):
         # Arrange
-        extractor = Extractor("0000001750")
+        extractor = Extract_Filing("0000001750")
         meta = FilingMeta(
             company="AIR",
             cik="0000001750",

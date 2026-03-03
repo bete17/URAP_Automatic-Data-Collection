@@ -9,7 +9,7 @@ import re
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.append(os.path.join(ROOT, "src"))
 
-from filing import Extractor
+from filing import Extract_Filing
 
 
 DATA_PATH = os.path.join(ROOT, "data", "sample_collect_2025Fall.csv")
@@ -36,19 +36,28 @@ def main(max_rows=None):
         df = df.iloc[:max_rows]
 
     total = len(df)
+    missing_values = 0
     successes = 0
     failure_records = []
 
     start = time.perf_counter()
 
     for idx, row in df.iterrows():
-        cik = str(row["cik"])
-        extractor = Extractor(cik)
+        cik = row["cik"]
+        
+        if cik is None or pd.isna(cik):
+            missing_values += 1
+            failure_records.append((cik, "missing_cik"))
+            continue
+        
         cik = extractor.cik  # zero-padded
         company = row.get("conm", "")
-        fiscal_year = row.get("fyear")
+        f_year = row.get("fyear")
+        
+        extractor = Extract_Filing(cik, f_year, company)
 
         row_start = time.perf_counter()
+        
 
         try:
             fiscal_year = int(fiscal_year)
@@ -65,7 +74,7 @@ def main(max_rows=None):
 
         # --- step 2: choose 10-K ---
         try:
-            meta = extractor.choose_10k(company, subs, fiscal_year)
+            meta = extractor.choose_10k(company, subs)
         except Exception as e:
             failure_records.append((cik, f"choose_10k:{repr(e)}"))
             continue
@@ -119,7 +128,7 @@ def main(max_rows=None):
 
 if __name__ == "__main__":
     # during development, limit to maybe 100 rows
-    main(max_rows=20)
+    main(max_rows=51)
 
     # for full production run:
     # main(max_rows=None)

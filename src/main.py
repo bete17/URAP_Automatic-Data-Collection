@@ -1,25 +1,45 @@
-from filing import Extractor
-from items import ItemExtractor
+from filing import Extract_Filing
+from items import Extract_Restructure
 from dataclass import FilingMeta
 from bs4 import BeautifulSoup
+import pandas as pd
+import os
 
 def main():
-    # --- Define metadata for one known 10-K ---
-    meta = FilingMeta(
-        company="AIR",
-        cik="0000001750",
-        fiscal_year=2019,
-        form="10-K",
-        accession="0001047469-19-004266",
-        primary_doc="a2239223z10-k.htm",
-        report_date="2019-05-31",
-        url="https://www.sec.gov/Archives/edgar/data/1750/000104746919004266/a2239223z10-k.htm"
-    )
-
-    # --- Fetch HTML from SEC ---
-    extractor = Extractor()
-    html = extractor.fetch_10k(meta)
     
+
+    filing = Extract_Filing(user_agent = "bruce0tan@gmail.com",cik ="0000001750", fiscal_year=2018, company="AIR", submission_filepath = "data/submission_info.csv")
+    html = filing.get_html()
+    item = Extract_Restructure()
+    
+    print(item.get_restructure(html))
+    
+    # df = pd.read_csv("data/10k_filing_info.csv", dtype={"cik": str})
+    # df2 = pd.read_csv("data/sample_all.csv", dtype={"cik": str})
+    # df2 = df2[df2['big05_rstr'] == True]
+    # ciks = df['cik'].unique().tolist()
+    # ciks2 = df2['cik'].unique().tolist()
+    # missing_ciks = []
+    # for cik in ciks2:
+    #     if cik not in ciks:
+    #         missing_ciks.append(cik)
+    # with open("data/missing_ciks.txt", "w") as f:
+    #     for cik in missing_ciks:
+    #         f.write(f"{cik}\n")
+    
+    # Separate item 7 and 8 restructure blocks
+    # Write out 2 .txt files with a name gvkey_fyear_item7.txt and gvkey_fyear_item8.txt
+    # Test out end to end process with a couple of rows from sample_all.csv
+    # Add case when item 8 is on a different page
+    
+    # Things we need for fetching 10-k
+    # accession number, cik, fiscal year (for matching), primary doc
+    # For each submission file that matches CIK we extract the needed info
+    # if its an extra submission file like Cik-submissions-001.json then we should hande it differently
+                
+    
+            
+            
 
 
 if __name__ == "__main__":
