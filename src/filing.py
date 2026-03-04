@@ -12,8 +12,6 @@ VALID_10K_FORMS = {"10-K", "10-k"}
 
 
 class Extract_Filing:
-
-    
     #Constructor
     def __init__(self, user_agent, cik, fiscal_year, company, submission_filepath, timeout=30, max_retries=3, retry_sleep=0.5):
         self.header = {"User-Agent": user_agent}
