@@ -8,7 +8,7 @@ sample_all.csv : All the desired companies that we want to collect.
 
 sample_collect_2025Fall.csv : All the companies that we manually collected (just 50 of them from top to bottom).
 
-10k_filing_info : This is where we store all the companies meta data needed to build each 10-k URL. This can be build with the build_filling.py in SRC. 
+submissions_info : This is where we store all the companies meta data needed to build each 10-k URL. This can be build with the build_filling.py in SRC. 
 
 The file above is needed for better run time in getting the 10-k.
 
