@@ -22,18 +22,6 @@ class Extract_Filing:
         self.submission_filepath = submission_filepath
         self.fiscal_year = int(fiscal_year)
         self.company = str(company)
-        
-
-    @staticmethod
-    def clean_name(s: str) -> str:
-        s = s.lower().strip()
-        s = re.sub(r'[,.\-&/]+', ' ', s)
-        s = re.sub(
-            r'\b(incorporated|inc|corp|corporation|co|ltd|plc|llc|holdings?|group)\b',
-            '',
-        )
-        s = re.sub(r'\s+', ' ', s)
-        return s.strip()
     
     #call request with retry and timeout
     def request_web(self, url: str):
