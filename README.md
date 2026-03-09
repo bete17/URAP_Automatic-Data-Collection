@@ -12,6 +12,21 @@ We want to collect data of 20,000+ companies and we need to automate that proces
 
 5. Feed restructuring into LLM and Get final CSV dataset
 
+# How To Contribute
+1. Pull the latest version of 'main'
+
+2. Create a new branch for your work include the issue number
+
+3. Make your changes and test it locally after
+
+4. Commit with messages that corresponds on the issue you picked
+
+5. Open a pull request into 'main'
+
+6. Merge only after approval
+
+
+
 ## Data
 All the data that is either used for testing or querying.
 
