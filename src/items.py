@@ -9,16 +9,30 @@ from dataclass import ItemSections, Block
 
 class Extract_Restructure:
     
-    # Normalize text
     @staticmethod
     def _norm(s: str) -> str:
+        """Normalize text by replacing non-breaking spaces and cleaning whitespace.
+
+        Args:
+            s (str) : The input string to normalize
+
+        Returns:
+            str: The normalized string.
+        """
         s = (s or "").replace("\xa0", " ")
         s = re.sub(r"[\s–—\-:._]+", " ", s, flags=re.UNICODE)
         return s.strip()
-    
-    #Read through the document until next item
+
     @staticmethod
     def stream_until_stop(start_tag):
+        """Extract content from 'start_tag' until the next section item
+
+        Args:
+            start_tag (Tag): The starting tag (<b>, <strong>) from which to extract content
+
+        Returns:
+            List[Block]: list of paragraphs and tables
+        """
         blocks: List[Block] = []
         current_paragraphs: List[str] = []
         
@@ -62,6 +76,14 @@ class Extract_Restructure:
     
     
     def find_item7_tag(self, soup):
+        """Find the tag that represent the item 7 headings which is usually under <b> or <strong>
+
+        Args:
+            soup (BeautifulSoup): The parsed HTML document
+
+        Returns:
+            Tag: The tag representing the item 7 heading
+        """
         candidates = []
         #find all the relevant tags
         for b in soup.find_all(["b", "strong"]):
@@ -85,6 +107,14 @@ class Extract_Restructure:
     
     
     def find_item8_tag(self, soup):
+        """Find the tag that represent the item 8 headings which is usually under <b> or <strong>
+
+        Args:
+            soup (BeautifulSoup): The parsed HTML document
+
+        Returns:
+            Tag: The tag representing the item 8 heading
+        """
         candidates = []
         for b in soup.find_all(["b", "strong"]):
             txt = b.get_text(" ", strip=True)
@@ -114,7 +144,14 @@ class Extract_Restructure:
     
     
     def extract_items(self, html):
-        #Take item 7 and 8 from the html document
+        """Extract item 7 and item 8 sections from the HTML document.
+
+        Args:
+            html (str): The HTML content to parse.
+
+        Returns:
+            ItemSections: An object containing the extracted blocks for each item.
+        """
         soup = BeautifulSoup(html, 'html.parser')
 
         item7_blocks = self.stream_until_stop(self.find_item7_tag(soup))
@@ -127,7 +164,14 @@ class Extract_Restructure:
         )
         
     def stream_blocks(self, blocks: List[Block]):
-        #Transform/Normalize item sections for simplicity
+        """Normalize all the paragraphs and table
+
+        Args:
+            blocks (List[Block]): lists of blocks to normalize
+
+        Returns:
+            LList[Block]: The normalized list of blocks
+        """
         for block in blocks:
             if block.type == "paragraph":
                 block.text = self._norm(block.text)
@@ -140,6 +184,14 @@ class Extract_Restructure:
         return blocks
     
     def is_restructuring(self, blocks):
+        """Check whether a paragraph/table is restructuring-related through keywords search
+
+        Args:
+            blocks (List[Block]): paragraphs/tables to check
+
+        Returns:
+            bool: True or False
+        """
         keywords = ["restructuring",
                 "reorganization",
                 "special charge",
@@ -183,7 +235,14 @@ class Extract_Restructure:
         return False
     
     def capture_hits(self, wanted_blocks):
-        #Aggregate all relevant blocks within one section.
+        """Collect all the restructuring-related paragraphs/tables
+
+        Args:
+            wanted_blocks (List[Block]): Item 7 or Item 8 blocks
+
+        Returns:
+            List[Dict]: A list of dictionaries containing the index and block for each hit
+        """
         
         # Normalize blocks first (safe to call with empty list)
         blocks = self.stream_blocks(wanted_blocks or [])
@@ -208,8 +267,17 @@ class Extract_Restructure:
         None
     
     def write_out(self, hits, filepath7, filepath8):
-        #Write the extracted sections to an output file.
-        # Ensure target directory exists
+        """Save the restructuring-blocks in files in [txt] format for item 7 and item 8 respectively
+
+        Args:
+            hits (List[Block]): Restructuring-related blocks
+            filepath7 (str): Path to the output file for item 7
+            filepath8 (str): Path to the output file for item 8
+
+        Returns:
+            None
+        """
+        
         dirpath = os.path.dirname(filepath7) or "."
         os.makedirs(dirpath, exist_ok=True)
 
@@ -242,11 +310,13 @@ class Extract_Restructure:
         return filepath7
 
     def get_restructure(self, sections_or_html) -> List[str]:
-        """Return all text snippets (paragraphs or flattened table text)
-        from Item 7 and Item 8 that contain any of the restructuring keywords.
+        """Full pipeline from the html to the restructuring-related item 7 and 8 paragraphs/tables cleaned and in text format
+        
+        Args:
+            sections_or_html (str/ItemSections):Either the raw html or the extracted items
 
-        `sections_or_html` may be either an `ItemSections` object (as returned
-        by `extract_items`) or an HTML string.
+        Returns:
+            List[str]: A list of restructuring-related paragraphs/tables in text format
         """
         # Accept either HTML or ItemSections
         if isinstance(sections_or_html, str):
