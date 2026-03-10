@@ -23,7 +23,7 @@ class Extract_Filing:
         self.fiscal_year = int(fiscal_year)
         self.company = str(company)
     
-    @staticmethod
+
     def request_web(self, url: str):
         last_exc = None
         for _ in range(self.max_retries):
@@ -59,7 +59,7 @@ class Extract_Filing:
             url=url,
         )
     
-    def get_submission(self) -> list[FilingMeta]:
+    def get_submission(self) -> FilingMeta | None:
         filepath = self.submission_filepath
         cik = self.cik
         fiscal_year = self.fiscal_year
@@ -70,7 +70,7 @@ class Extract_Filing:
         if df.empty:
             return None
         
-        acc_no = df['accession_number'].values[0].replace("-", "")
+        acc_no = df['accession_number'].values[0]
         primary_doc = df['primary_doc'].values[0]
         return self.build_meta(
             company=self.company,
@@ -79,7 +79,7 @@ class Extract_Filing:
             form="10-K",
             accession=acc_no,
             primary_doc=primary_doc,
-            report_date=fiscal_year,
+            report_date=df['report_date'].values[0] if 'report_date' in df.columns else None,
         )
     
     def fetch_10k(self, meta: FilingMeta) -> str:
