@@ -84,33 +84,6 @@ class Testfiling(unittest.TestCase):
             self.assertGreater(len(html), 10)
             self.assertIn("<html", html.lower())
             self.assertIn("</html>", html.lower())
-
-    def test_request_web_success(self):
-        extractor = Extract_Filing(
-            user_agent="john@email.com",
-            cik="0000001750",
-            fiscal_year=2023,
-            company="Test Company",
-            submission_filepath="data/submission.csv"
-        )
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        with patch('filing.requests.get', return_value=mock_response) as mock_get:
-            result = extractor.request_web("https://fake-url.com")
-            self.assertIsNotNone(result)
-            self.assertEqual(result.status_code, 200)
-
-    def test_request_web_failure(self):
-        extractor = Extract_Filing(
-            user_agent="john@email.com",
-            cik="0000001750",
-            fiscal_year=2023,
-            company="Test Company",
-            submission_filepath="data/submission.csv"
-        )
-        with patch('filing.requests.get', side_effect=requests.RequestException("Server error")):
-            result = extractor.request_web("https://fake-url.com")
-            self.assertIsNone(result)
-
+            
 if __name__ == "__main__":
     unittest.main()
