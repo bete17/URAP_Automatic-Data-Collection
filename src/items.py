@@ -266,48 +266,6 @@ class Extract_Restructure:
         #Merge adjacent blocks into one larger block.
         None
     
-    def write_out(self, hits, filepath7, filepath8):
-        """Save the restructuring-blocks in files in [txt] format for item 7 and item 8 respectively
-
-        Args:
-            hits (List[Block]): Restructuring-related blocks
-            filepath7 (str): Path to the output file for item 7
-            filepath8 (str): Path to the output file for item 8
-
-        Returns:
-            None
-        """
-        
-        dirpath = os.path.dirname(filepath7) or "."
-        os.makedirs(dirpath, exist_ok=True)
-
-        # Write as CSV with columns: index, type, content
-        with open(filepath7, "w", newline="", encoding="utf-8") as fh:
-            writer = csv.DictWriter(fh, fieldnames=["index", "type", "content"] )
-            writer.writeheader()
-
-            for hit in hits or []:
-                idx = hit.get("index")
-                block = hit.get("block")
-
-                if getattr(block, "type", None) == "paragraph":
-                    content = (block.text or "").strip()
-                    btype = "paragraph"
-                elif getattr(block, "type", None) == "table":
-                    rows = block.rows or []
-                    # join cells with tab, rows with newline
-                    content = "\n".join("\t".join(cell for cell in row if cell) for row in rows)
-                    btype = "table"
-                elif isinstance(block, str):
-                    content = block
-                    btype = "string"
-                else:
-                    content = repr(block)
-                    btype = getattr(block, "type", "unknown")
-
-                writer.writerow({"index": idx, "type": btype, "content": content})
-
-        return filepath7
 
     def get_restructure(self, sections_or_html) -> List[str]:
         """Full pipeline from the html to the restructuring-related item 7 and 8 paragraphs/tables cleaned and in text format
