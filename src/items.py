@@ -193,22 +193,21 @@ class Extract_Restructure:
             bool: True or False
         """
         keywords = ["restructuring",
-                "reorganization",
-                "special charge",
+                "reorganizations?",
+                "special\s+charges?",
                 "realignment",
                 "repositioning",
-                "asset impairment",
-                "layoff cost",
-                "employee termination",
-                "workforce reduction"
+                "asset\s+impairment",
+                "layoff\s+costs?",
+                "employee\s+termination",
+                "workforce\s+reduction"
             ]
-        kws = [k.lower().strip() for k in keywords if k]
-        if not kws:
+        
+        if not keywords:
             return False
 
         # build regex that matches any keyword as a whole phrase
-        kws_pattern = r"|".join(re.escape(k) for k in kws)
-        pattern = re.compile(rf"\b(?:{kws_pattern})\b", re.I)
+        pattern = re.compile(r"\b(?:%s)\b" % "|".join(keywords), re.I)
 
         for block in blocks or []:
             if block is None:
