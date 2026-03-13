@@ -163,7 +163,7 @@ class Extract_Restructure:
             source_url=None,
         )
         
-    def stream_blocks(self, blocks: List[Block]):
+    def norm_blocks(self, blocks: List[Block]):
         """Normalize all the paragraphs and table
 
         Args:
@@ -228,7 +228,7 @@ class Extract_Restructure:
                 # Unknown block shape — skip
                 continue
 
-            if text and pattern.search(text):
+            if text.lower() and pattern.search(text):
                 return True
 
         return False
@@ -247,18 +247,33 @@ class Extract_Restructure:
         blocks = self.stream_blocks(wanted_blocks or [])
 
         hits = []
-
+        matches_indices = []  # To track blocks with keywords
+        groups = [] 
+        #Go through each paragraphs and table and check for restructuring keywords
         for idx, block in enumerate(blocks):
             try:
                 if self.is_restructuring([block]):
-                    hits.append({
-                        "index": idx,
-                        "block": block,
-                    })
+                    matches_indices.append(idx)
             except Exception:
-                # Skip problematic blocks but continue processing
                 continue
-
+        
+        # Group nearby matches together (e.g., within 2 blocks of each other)
+        for idx in matches_indices:
+            if not groups:
+                groups.append([idx])
+            elif idx - groups[-1][-1] <= 2:
+                groups[-1].append(idx)
+            else:
+                groups.append([idx])
+        # Capture the blocks and combined all the blocks in each group
+        for group in groups:
+            start = max(0, group[0] -2)
+            end = min(len(blocks), group[-1] + 3)
+            combined_block = " ".join(blocks[start:end]).strip()
+            hits.append({
+                "index": group[0],
+                "block": combined_block,
+            })
         return hits
     
     def merge_adjacent(self, blocks):
@@ -285,7 +300,7 @@ class Extract_Restructure:
 
         for blocks in (sections.item7_blocks or [], sections.item8_blocks or []):
             # normalize blocks first
-            normalized = self.stream_blocks(blocks)
+            normalized = self.norm_blocks(blocks)
             hits = self.capture_hits(normalized)
             for rec in hits:
                 block = rec.get("block")
