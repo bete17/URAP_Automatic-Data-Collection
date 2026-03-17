@@ -228,7 +228,7 @@ class Extract_Restructure:
                 # Unknown block shape — skip
                 continue
 
-            if text.lower() and pattern.search(text):
+            if text and pattern.search(text.lower()):
                 return True
 
         return False
