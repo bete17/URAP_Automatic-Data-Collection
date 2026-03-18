@@ -276,9 +276,26 @@ class Extract_Restructure:
             })
         return hits
     
-    def merge_adjacent(self, blocks):
-        #Merge adjacent blocks into one larger block.
-        None
+    def merge_paragraph(self, blocks):
+        """
+        Merge restructuring blocks into one 
+        
+        Args:
+            blocks (List[Block]): A list of restructuring-related blocks to merge
+        
+        Returns:
+            Optional[Block]: A single merged block if the first block is a paragraph, otherwise None
+        """
+        if not blocks:
+            return None
+        
+        if getattr(blocks[0], "type", None) == "paragraph":
+            merged_text = " ".join((block.text or "") for block in blocks)
+            return Block(type="paragraph", text=merged_text)
+        
+        else:
+            return None
+
     
 
     def get_restructure(self, sections_or_html) -> List[str]:
