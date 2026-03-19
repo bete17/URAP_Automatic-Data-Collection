@@ -6,7 +6,7 @@ class LLM:
     def __init__(self) :
         self.item7 = "_item7.txt"
         self.item8 = "_item8.txt"
-        with open("Question.txt", "r", encoding="utf-8") as f:
+        with open("Template.txt", "r", encoding="utf-8") as f:
             self.question = f.read()
 
     def getFileName(self, name: str) :
