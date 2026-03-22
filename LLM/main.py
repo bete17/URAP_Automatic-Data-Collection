@@ -1,17 +1,21 @@
+import os
+
 from LLM import LLM
 from prepare_companies import preparation
-from csvConvert import txtToCsv
+from Parse_LLM import txtToCsv
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 def __main__() :
 
     prep = preparation("sample_collect_2025Fall.csv")
     prep.getCompany(104)
-    fileName = prep.getFileName()
-    
+    stem = prep.getFileName()
+    item7_path = os.path.join(_HERE, f"{stem}_item7.txt")
 
     print("parsing complete, pushing to LLM")
-    gpt = LLM()
-    gpt.getFileName(fileName)
+    gpt = LLM(item7_path=item7_path)
     gpt.getContent(7)
     txt = gpt.push()
 

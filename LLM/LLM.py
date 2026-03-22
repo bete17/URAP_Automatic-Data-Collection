@@ -1,39 +1,55 @@
-import ollama 
+import os
 import time
+from typing import Optional
+
+import ollama
+
+_BASE = os.path.dirname(os.path.abspath(__file__))
+
 
 class LLM:
+    def __init__(
+        self,
+        item7_path: str,
+        item8_path: Optional[str] = None,
+        template_path: str = "Template.txt",
+    ) -> None:
+        """
+        Args:
+            item7_path: Filesystem path to the Item 7 restructuring text file.
+            item8_path: Optional path to the Item 8 restructuring text file (required when using getContent(8)).
+            template_path: Path to the question template; if relative, resolved next to this module.
+        """
+        self.item7_path = os.path.abspath(item7_path)
+        self.item8_path = os.path.abspath(item8_path) if item8_path else None
 
-    def __init__(self) :
-        self.item7 = "_item7.txt"
-        self.item8 = "_item8.txt"
-        with open("Template.txt", "r", encoding="utf-8") as f:
+        tmpl = template_path if os.path.isabs(template_path) else os.path.join(_BASE, template_path)
+        with open(tmpl, "r", encoding="utf-8") as f:
             self.question = f.read()
 
-    def getFileName(self, name: str) :
-        #To get the filename contains the segments
-        self.item7 = name + self.item7 
-        self.item8 = name + self.item8 
-
-    def getContent(self, item : int) :
-        #Append the item7/8 to the question doc and change it to a string
+    def getContent(self, item: int) -> str:
+        """Append Item 7 or Item 8 restructuring text to the template prompt."""
         if item == 7:
-            name = self.item7
+            path = self.item7_path
         elif item == 8:
-            name = self.item8
-        with open(name, "r", encoding = "utf-8") as g:
-            item7 = g.read()
-        self.question = self.question + item7
-        return self.question 
+            if self.item8_path is None:
+                raise ValueError("item8_path was not set; pass item8_path=... to the constructor.")
+            path = self.item8_path
+        else:
+            raise ValueError(f"item must be 7 or 8, got {item!r}")
 
-    def push(self) :
-        #push to LLM
+        with open(path, "r", encoding="utf-8") as g:
+            body = g.read()
+        self.question = self.question + body
+        return self.question
+
+    def push(self) -> str:
         start_time = time.time()
-        response = ollama.chat(model="gpt-oss:20b", messages = 
-                       [{'role' : 'user', 'content' : self.question}])
-        model_text = response['message']['content']
+        response = ollama.chat(
+            model="gpt-oss:20b",
+            messages=[{"role": "user", "content": self.question}],
+        )
+        model_text = response["message"]["content"]
         end_time = time.time()
-        time_taken = end_time - start_time
-        print(f"this process took {time_taken} seconds")
+        print(f"this process took {end_time - start_time:.2f} seconds")
         return model_text
-        
-    
