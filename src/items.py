@@ -244,7 +244,7 @@ class Extract_Restructure:
         """
         
         # Normalize blocks first (safe to call with empty list)
-        blocks = self.stream_blocks(wanted_blocks or [])
+        blocks = self.norm_blocks(wanted_blocks or [])
 
         hits = []
         matches_indices = []  # To track blocks with keywords
