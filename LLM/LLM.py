@@ -8,6 +8,12 @@ _BASE = os.path.dirname(os.path.abspath(__file__))
 
 
 class LLM:
+    """Builds the prompt from Template.txt + restructuring files and calls Ollama.
+
+    This class only **returns** model text from ``push()``; it does **not** persist outputs.
+    Use ``Parse_LLM.Export`` (or similar) to save the response (CSV/JSON).
+    """
+
     def __init__(
         self,
         item7_path: str,
