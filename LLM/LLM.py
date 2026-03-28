@@ -34,7 +34,11 @@ class LLM:
             self.question = f.read()
 
     def getContent(self, item: int) -> str:
-        """Append Item 7 or Item 8 restructuring text to the template prompt."""
+        """Append Item 7 or Item 8 restructuring text to the template prompt.
+
+        Call at most one of ``getContent(7)`` or ``getContent(8)`` before ``push()`` if the
+        model should see only that item’s text (calling both appends both bodies).
+        """
         if item == 7:
             path = self.item7_path
         elif item == 8:
