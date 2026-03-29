@@ -11,8 +11,10 @@ _DATA_DIR = os.path.join(_HERE, "..", "data")
 # Only one of Item 7 or Item 8 is sent to the model per run (not both).
 ITEM = 7  # set to 8 to use Item 8 restructuring text only
 
+# Where the JSONL files are stored
 # Placeholder — replace `[filepath]` with your real output basename when ready (e.g. "llm_outputs.jsonl").
-OUTPUT_JSONL = os.path.join(_DATA_DIR, "[filepath].jsonl")
+OUTPUT_JSONL7 = os.path.join(_DATA_DIR, "[filepath].jsonl")
+OUTPUT_JSONL8 = os.path.join(_DATA_DIR, "[filepath].jsonl")
 
 
 def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
@@ -62,11 +64,20 @@ def __main__():
             item7_path=item7_path,
             item8_path=item8_path if ITEM == 8 else None,
         )
+        # Prepare the prompt
         gpt.getContent(ITEM)
         txt = gpt.push()
-
+        # Export the response
         exporter = Export(txt, prep, item_label)
         exporter.append_to_jsonl(OUTPUT_JSONL)
+        # Add it the records of the completed items
+        completed.add((str(prep.name), item_label))
+
+        # Item 8 output
+        gpt.getContent(8)
+        txt = gpt.push()
+        exporter = Export(txt, prep, item_label)
+        exporter.append_to_jsonl(OUTPUT_JSONL8)
         completed.add((str(prep.name), item_label))
 
 

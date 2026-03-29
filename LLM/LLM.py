@@ -39,6 +39,7 @@ class LLM:
         Call at most one of ``getContent(7)`` or ``getContent(8)`` before ``push()`` if the
         model should see only that item’s text (calling both appends both bodies).
         """
+        question = self.question
         if item == 7:
             path = self.item7_path
         elif item == 8:
@@ -50,8 +51,8 @@ class LLM:
 
         with open(path, "r", encoding="utf-8") as g:
             body = g.read()
-        self.question = self.question + body
-        return self.question
+        question += body
+        return question
 
     def push(self) -> str:
         start_time = time.time()

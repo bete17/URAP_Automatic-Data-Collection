@@ -16,7 +16,6 @@ class preparation :
     index = 0
     numRows : int
     url : str
-    ARCHIVES_BASE = "https://www.sec.gov/Archives"
 
     """
     df.iat[r, c] -> return the value at (r, c)
@@ -42,9 +41,7 @@ class preparation :
             raise ValueError("invalid index")
         self.index = index
         self.gvkey = self.df.iat[index, 0]
-        self.name = self.df.iat[index, 1]
-        self.cik = self.df.iat[index, 3]
-        self.cik = self.df.iat[index, 4]
+        self.cik = self.df.iat[index, 3].zfill(10)
         self.fyear = self.df.iat[index, 5]
         self.name = f"{self.gvkey}_{self.fyear}"
         self.url = ""
@@ -61,5 +58,5 @@ class preparation :
 
     #this method is for testing
     def __str__(self):
-        return f"gvkey: {self.gvkey}, name: {self.name}"
+        return f"gvkey: {self.gvkey}, fyear: {self.fyear}, cik: {self.cik}"
 

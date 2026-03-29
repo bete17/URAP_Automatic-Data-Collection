@@ -51,28 +51,6 @@ class Export :
                     column_name = f"{question}_{i}"
                     self.row_data[column_name] = answer
 
-    def to_df(self):
-            # Create the DataFrame from the dictionary
-            df = pd.DataFrame([self.row_data])
-            
-            # Transpose it: Columns become Rows, Rows become Columns
-            df_transposed = df.T
-            
-            # Optional: Reset index so the 'Questions' are a proper column 
-            # instead of just index labels
-            df_transposed = df_transposed.reset_index()
-            df_transposed.columns = ['Category', 'Value']
-            
-            return df_transposed
-    
-    def to_csv(self):
-        df = self.to_df()
-        corp = self.company
-        # We use header=False because 'Category' and 'Value' 
-        # are often not wanted in row-major research templates
-        filename = f"{corp.gvkey}_{corp.fyear}_{self.item}.csv"
-        df.to_csv(filename, index=False, header=False)
-
     def _build_responses(self) -> Dict[str, Any]:
         """
         Convert the flat `row_data` dict into a structured JSON-friendly form:
