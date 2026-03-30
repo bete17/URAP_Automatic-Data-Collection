@@ -69,7 +69,7 @@ def __main__():
         txt = gpt.push()
         # Export the response
         exporter = Export(txt, prep, item_label)
-        exporter.append_to_jsonl(OUTPUT_JSONL)
+        exporter.append_to_jsonl(OUTPUT_JSONL7)
         # Add it the records of the completed items
         completed.add((str(prep.name), item_label))
 
