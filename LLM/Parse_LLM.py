@@ -35,7 +35,7 @@ class Export :
         Params:
             - text: The llm reply string
         Returns:
-            - row_data: A dictionary of key/valued entries
+            None
         """
         lines = self.text.strip().split('\n')
         
@@ -60,9 +60,11 @@ class Export :
 
     def _build_responses(self) -> Dict[str, Any]:
         """
-        Convert the flat `row_data` dict into a structured JSON-friendly form:
-        - Single-answer questions become `responses[question] = "answer"`
-        - Multi-answer questions become `responses[question] = ["a1", "a2", ...]`
+        Build the dictionary of the LLM responses
+        Params:
+            - None
+        Returns:
+            - responses: A dictionary of the responses
         """
         base_fields = {"gvkey", "cik", "name", "URL"}
         responses: Dict[str, Any] = {}
@@ -97,7 +99,11 @@ class Export :
 
     def to_json_record(self) -> Dict[str, Any]:
         """
-        Build a single JSON object representing this company+item response.
+        Put together the JSON record for a company+item response
+        Params:
+            - None
+        Returns:
+            - record: A dictionary of the record
         """
         corp = self.company
         return {
