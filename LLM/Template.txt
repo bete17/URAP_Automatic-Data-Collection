@@ -1,8 +1,8 @@
 Answer these questions based on the info above, format it in a strict "question | answer " format. If there are multiple items to the question, separate them with "|". For questions with no apparent answer, put "NaN" in the response. Do not put anything else in the response. Do not bring your own knowledge into this
 When was the restructuring plan announced? (MM/DD/YY)
-What are the management stated reasons (purpose) of restructuring? o Note: List each stated reason in a separate column.
-What savings does the company anticipate? Note: please list the integer amount in millions of dollars. (numbers)
-What savings did the company accomplish in relation to restructuring performed in prior years? Note: please list the integer amount in millions of dollars. (numbers)
+What are the management stated reasons (purpose) of restructuring? o Note: List each stated reason in a separate column. (e.g., cost reduction, covid pandemic, merger and acquisition)
+What savings does the company anticipate? Note: please list the integer amount in millions of dollars. (e.g., 1234)
+What savings did the company accomplish in relation to restructuring performed in prior years? Note: please list the integer amount in millions of dollars. (e.g.,1234 )
 How much total restructuring charges were recorded? Note: Record each component of the charges in $ million in separate columns (e.g., Severance: 10, Lease Termination: 20).
 How much reduction in employees? o Number of employees reduced (1 column) or % of workforce reduced (2nd column). Note: please give an integer only.
 Did the company report a closure of any facilities/line of business? o (Yes or No)
