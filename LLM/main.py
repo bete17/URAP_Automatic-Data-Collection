@@ -8,13 +8,13 @@ from Parse_LLM import Export
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
 
-# Only one of Item 7 or Item 8 is sent to the model per run (not both).
-ITEM = 7  # set to 8 to use Item 8 restructuring text only
+# Where the JSONL files are stored (one file per item type).
+OUTPUT_JSONL7 = os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl")
+OUTPUT_JSONL8 = os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl")
 
-# Where the JSONL files are stored
-# Placeholder — replace `[filepath]` with your real output basename when ready (e.g. "llm_outputs.jsonl").
-OUTPUT_JSONL7 = os.path.join(_DATA_DIR, "[filepath].jsonl")
-OUTPUT_JSONL8 = os.path.join(_DATA_DIR, "[filepath].jsonl")
+# Limit how many rows to process in this run.
+# Set to an int (e.g. 200) to cap the batch; set to None to process all rows.
+MAX_ROWS: int | None = None
 
 
 def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
@@ -45,40 +45,50 @@ def __main__():
 
     sample_csv = os.path.join(_DATA_DIR, "sample_collect_2025Fall.csv")
     prep = preparation(sample_csv)
-    item_label = f"item{ITEM}"
-    completed = _load_completed_keys(OUTPUT_JSONL)
-    print(f"resume: {len(completed)} record(s) already in {os.path.basename(OUTPUT_JSONL)}")
+    completed7 = _load_completed_keys(OUTPUT_JSONL7)
+    completed8 = _load_completed_keys(OUTPUT_JSONL8)
+    print(
+        f"resume: {len(completed7)} item7 record(s) already in {os.path.basename(OUTPUT_JSONL7)} | "
+        f"{len(completed8)} item8 record(s) already in {os.path.basename(OUTPUT_JSONL8)}"
+    )
 
-    for row_index in range(prep.numRows):
+    end_index = prep.numRows if MAX_ROWS is None else min(prep.numRows, MAX_ROWS)
+    for row_index in range(end_index):
         prep.getCompany(row_index)
         stem = prep.getFileName()
         item7_path = os.path.join(_HERE, f"{stem}_item7.txt")
         item8_path = os.path.join(_HERE, f"{stem}_item8.txt")
-
-        if (str(prep.name), item_label) in completed:
-            print(f"skip (already done) row {row_index}/{prep.numRows - 1} {stem}")
-            continue
+        name_key = str(prep.name)
 
         print(f"row {row_index}/{prep.numRows - 1} {stem}")
-        gpt = LLM(
-            item7_path=item7_path,
-            item8_path=item8_path if ITEM == 8 else None,
-        )
-        # Prepare the prompt
-        gpt.getContent(ITEM)
-        txt = gpt.push()
-        # Export the response
-        exporter = Export(txt, prep, item_label)
-        exporter.append_to_jsonl(OUTPUT_JSONL7)
-        # Add it the records of the completed items
-        completed.add((str(prep.name), item_label))
 
-        # Item 8 output
-        gpt.getContent(8)
-        txt = gpt.push()
-        exporter = Export(txt, prep, item_label)
-        exporter.append_to_jsonl(OUTPUT_JSONL8)
-        completed.add((str(prep.name), item_label))
+        # --------------------
+        # Item 7 (separate prompt instance)
+        # --------------------
+        item7_key = (name_key, "item7")
+        if item7_key not in completed7:
+            try:
+                gpt7 = LLM(item7_path=item7_path)
+                gpt7.getContent(7)
+                txt7 = gpt7.push()
+                Export(txt7, prep, "item7").append_to_jsonl(OUTPUT_JSONL7)
+                completed7.add(item7_key)
+            except Exception as e:
+                print(f"ERROR item7 for {name_key}: {e!r}")
+
+        # --------------------
+        # Item 8 (separate prompt instance)
+        # --------------------
+        item8_key = (name_key, "item8")
+        if item8_key not in completed8:
+            try:
+                gpt8 = LLM(item7_path=item7_path, item8_path=item8_path)
+                gpt8.getContent(8)
+                txt8 = gpt8.push()
+                Export(txt8, prep, "item8").append_to_jsonl(OUTPUT_JSONL8)
+                completed8.add(item8_key)
+            except Exception as e:
+                print(f"ERROR item8 for {name_key}: {e!r}")
 
 
 __main__()
