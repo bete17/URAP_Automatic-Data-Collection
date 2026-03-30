@@ -30,6 +30,13 @@ class Export :
         self._parse_text_to_cells()
 
     def _parse_text_to_cells(self):
+        """
+        Convert the llm reply string into key/valued entries
+        Params:
+            - text: The llm reply string
+        Returns:
+            - row_data: A dictionary of key/valued entries
+        """
         lines = self.text.strip().split('\n')
         
         for line in lines:
