@@ -17,16 +17,17 @@ class Extract_Filing:
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_sleep = retry_sleep
+        self.user_agent = user_agent
         self.cik = str(int(cik)).zfill(10)
         self.fiscal_year = int(fiscal_year)
         self.company = str(company)
     
-    @staticmethod
-    def request_web(self, url: str, header: dict):
+    def request_web(self, url: str, header: dict | None = None):
+        headers = header or {"User-Agent": self.user_agent}
         last_exc = None
         for _ in range(self.max_retries):
             try:
-                r = requests.get(url, headers=header, timeout=self.timeout)
+                r = requests.get(url, headers=headers, timeout=self.timeout)
                 r.raise_for_status()
                 return r
             except requests.RequestException as e:
@@ -83,9 +84,9 @@ class Extract_Filing:
         r = self.request_web(meta.url)
         return r.text
                     
-    def get_html(self) -> str | None:
+    def get_html(self, filepath: str) -> str | None:
         # 1) get submissions
-        meta = self.get_submission()
+        meta = self.get_submission(filepath)
         if not meta:
             return None
         # 3) fetch HTML
