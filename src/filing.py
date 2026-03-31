@@ -13,22 +13,20 @@ VALID_10K_FORMS = {"10-K", "10-k"}
 
 class Extract_Filing:
     #Constructor
-    def __init__(self, user_agent, cik, fiscal_year, company, submission_filepath, timeout=30, max_retries=3, retry_sleep=0.5):
-        self.header = {"User-Agent": user_agent}
+    def __init__(self, user_agent, cik, fiscal_year, company, timeout=30, max_retries=3, retry_sleep=0.5):
         self.timeout = timeout
         self.max_retries = max_retries
         self.retry_sleep = retry_sleep
         self.cik = str(int(cik)).zfill(10)
-        self.submission_filepath = submission_filepath
         self.fiscal_year = int(fiscal_year)
         self.company = str(company)
     
     @staticmethod
-    def request_web(self, url: str):
+    def request_web(self, url: str, header: dict):
         last_exc = None
         for _ in range(self.max_retries):
             try:
-                r = requests.get(url, headers=self.header, timeout=self.timeout)
+                r = requests.get(url, headers=header, timeout=self.timeout)
                 r.raise_for_status()
                 return r
             except requests.RequestException as e:
@@ -59,8 +57,7 @@ class Extract_Filing:
             url=url,
         )
     
-    def get_submission(self) -> list[FilingMeta]:
-        filepath = self.submission_filepath
+    def get_submission(self, filepath: str) -> list[FilingMeta]:
         cik = self.cik
         fiscal_year = self.fiscal_year
         df = pd.read_csv(filepath, dtype={"cik": str})
