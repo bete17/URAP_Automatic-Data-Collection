@@ -7,6 +7,8 @@ from Parse_LLM import Export
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
+_RESTRUCTURING_7 = os.path.join(_DATA_DIR, "item7_restructuring")
+_RESTRUCTURING_8 = os.path.join(_DATA_DIR, "item8_restructuring")
 
 # Where the JSONL files are stored (one file per item type).
 OUTPUT_JSONL7 = os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl")
@@ -56,8 +58,8 @@ def __main__():
     for row_index in range(end_index):
         prep.getCompany(row_index)
         stem = prep.getFileName()
-        item7_path = os.path.join(_HERE, f"{stem}_item7.txt")
-        item8_path = os.path.join(_HERE, f"{stem}_item8.txt")
+        item7_path = os.path.join(_RESTRUCTURING_7, f"{stem}_item7.txt")
+        item8_path = os.path.join(_RESTRUCTURING_8, f"{stem}_item8.txt")
         name_key = str(prep.name)
 
         print(f"row {row_index}/{prep.numRows - 1} {stem}")
