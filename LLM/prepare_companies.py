@@ -41,8 +41,9 @@ class preparation :
             raise ValueError("invalid index")
         self.index = index
         self.gvkey = self.df.iat[index, 0]
-        self.cik = self.df.iat[index, 3].zfill(10)
+        self.cik = str(self.df.iat[index, 2]).zfill(10)
         self.fyear = self.df.iat[index, 5]
+        self.corpName = self.df.iat[index, 1]
         self.name = f"{self.gvkey}_{self.fyear}"
         self.url = ""
 
