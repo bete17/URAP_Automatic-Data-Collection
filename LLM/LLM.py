@@ -33,6 +33,9 @@ class LLM:
         with open(tmpl, "r", encoding="utf-8") as f:
             self.question = f.read()
 
+        #under is for eval data
+        self.token = 0
+
     def getContent(self, item: int) -> str:
         """Append Item 7 or Item 8 restructuring text to the template prompt.
 
@@ -61,6 +64,10 @@ class LLM:
             messages=[{"role": "user", "content": self.question}],
         )
         model_text = response["message"]["content"]
+        tokens = response.get('prompt_eval_count', 0)
+        tokens_this_run = tokens-self.token
+        self.token = tokens
         end_time = time.time()
+        time_taken = end_time - start_time
         print(f"this process took {end_time - start_time:.2f} seconds")
-        return model_text
+        return model_text, tokens_this_run, time_taken, len(self.question)
