@@ -35,6 +35,7 @@ class LLM:
 
         #under is for eval data
         self.token = 0
+        self.question_completed: Optional[str] = None
 
     def getContent(self, item: int) -> str:
         """Append Item 7 or Item 8 restructuring text to the template prompt.
@@ -42,7 +43,6 @@ class LLM:
         Call at most one of ``getContent(7)`` or ``getContent(8)`` before ``push()`` if the
         model should see only that item’s text (calling both appends both bodies).
         """
-        question = self.question
         if item == 7:
             path = self.item7_path
         elif item == 8:
@@ -54,21 +54,33 @@ class LLM:
 
         with open(path, "r", encoding="utf-8") as g:
             body = g.read()
-        question += body
-        self.question = question 
-        return question
+        
+        self.question_completed = self.question + body
+        return self.question_completed
 
     def push(self) -> str:
+        if not self.question_completed:
+            raise RuntimeError("Call getContent() before push().")
         start_time = time.time()
-        response = ollama.chat(
-            model="gpt-oss:20b",
-            messages=[{"role": "user", "content": self.question}]
-        )
-        model_text = response["message"]["content"]
-        tokens = response.get('prompt_eval_count', 0)
-        tokens_this_run = tokens-self.token
-        self.token = tokens
+        response = ollama.generate(model="gpt-oss:20b",
+                                   prompt=self.question_completed,
+                                   options={"num_gpu": 99,
+                                            "num_thread": 6,
+                                            "num_ctx": 4096,
+                                            "num_batch": 512,
+                                            "num_predict":2000,
+                                            "temperature": 0.1,
+                                            "f16_kv": True,
+                                            "think": False,
+        }
+    )
         end_time = time.time()
         time_taken = end_time - start_time
+        #model_text = response["message"]["content"]
+        model_text = response.response
+        tokens = response.eval_count or 0
+        #tokens_this_run = tokens-self.token
+        self.token = tokens
         print(f"this process took {end_time - start_time:.2f} seconds")
-        return model_text, tokens_this_run, time_taken, len(self.question)
+        print(f"this process took {tokens} tokens")
+        return model_text, tokens, time_taken, len(self.question_completed)
