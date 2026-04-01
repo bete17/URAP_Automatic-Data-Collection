@@ -99,6 +99,8 @@ def __main__():
                 completed8.add(item8_key)
             except Exception as e:
                 print(f"ERROR item8 for {name_key}: {e!r}")
+        log7.save_plots("log7_run.png")
+        log8.save_plots("log8_run.png")
 
 
 __main__()

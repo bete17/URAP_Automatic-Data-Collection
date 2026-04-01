@@ -72,7 +72,7 @@ def __main__():
             try:
                 gpt7 = LLM(item7_path=item7_path)
                 gpt7.getContent(7)
-                txt7 = gpt7.push()
+                txt7, _, _, _ = gpt7.push()
                 Export(txt7, prep, "item7").append_to_jsonl(OUTPUT_JSONL7)
                 completed7.add(item7_key)
             except Exception as e:
@@ -86,7 +86,7 @@ def __main__():
             try:
                 gpt8 = LLM(item7_path=item7_path, item8_path=item8_path)
                 gpt8.getContent(8)
-                txt8 = gpt8.push()
+                txt8, _, _, _ = gpt8.push()
                 Export(txt8, prep, "item8").append_to_jsonl(OUTPUT_JSONL8)
                 completed8.add(item8_key)
             except Exception as e:
