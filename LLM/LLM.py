@@ -68,7 +68,7 @@ class LLM:
                                             "num_thread": 6,
                                             "num_ctx": 4096,
                                             "num_batch": 512,
-                                            "num_predict":2000,
+                                            "num_predict":3000,
                                             "temperature": 0.1,
                                             "f16_kv": True,
                                             "think": False,
