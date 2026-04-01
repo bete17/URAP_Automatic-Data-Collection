@@ -55,13 +55,14 @@ class LLM:
         with open(path, "r", encoding="utf-8") as g:
             body = g.read()
         question += body
+        self.question = question 
         return question
 
     def push(self) -> str:
         start_time = time.time()
         response = ollama.chat(
             model="gpt-oss:20b",
-            messages=[{"role": "user", "content": self.question}],
+            messages=[{"role": "user", "content": self.question}]
         )
         model_text = response["message"]["content"]
         tokens = response.get('prompt_eval_count', 0)
