@@ -14,7 +14,18 @@ _DEFAULT_OUTPUT_PATH = os.path.join(_DATA_DIR, "llm_outputs.jsonl")
 """
 Parses the LLM text and export to CSV according to template format
 """
-
+QUESTION_KEYS = [
+    "announcement_date",
+    "stated_reasons",
+    "anticipated_savings",
+    "prior_year_savings",
+    "restructuring_charges",
+    "employee_reduction",
+    "facility_closures",
+    "facilities_closed",
+    "cost_reduction_mentioned",
+    "completion_timeline_reported",
+    ]
 class Export :
 
     def __init__(self, text : str, company : preparation, item : str) :
@@ -27,7 +38,8 @@ class Export :
             'name' : company.name,
             'URL' : company.url,
         }
-        self._parse_text_to_cells()
+        self._parse_text_to_cells() 
+
 
     def _parse_text_to_cells(self):
         """
@@ -37,26 +49,35 @@ class Export :
         Returns:
             None
         """
-        lines = self.text.strip().split('\n')
-        
+        lines = [l.strip() for l in self.text.strip().split('\n') if l.strip()]
+
+        parsed = 0
         for line in lines:
+            if parsed >= len(QUESTION_KEYS):
+                break
             if '|' not in line:
-                continue
-                
+                continue  # skip preamble/blank lines
+
             parts = [p.strip() for p in line.split('|')]
-            question = parts[0]  # The first part is the header
-            answers = parts[1:]  # Everything after the first pipe
-            
-            # If there's only one answer, just use the question as the header
-            if len(answers) == 1:
-                self.row_data[question] = answers[0]
+
+            # Handle both "question | answer" and "answer1 | answer2" formats
+            # If first part is long (>50 chars), treat it as the question label and skip it
+            if len(parts[0]) > 50:
+                answers = parts[1:]
             else:
-                # If there are multiple answers, create unique headers:
-                # e.g., "What savings... | 2000 | 1000" becomes 
-                # "What savings..._1": 2000, "What savings..._2": 1000
-                for i, answer in enumerate(answers, 1):
-                    column_name = f"{question}_{i}"
-                    self.row_data[column_name] = answer
+                answers = parts
+
+            if not answers:
+                continue
+
+            key = QUESTION_KEYS[parsed]
+            if len(answers) == 1:
+                self.row_data[key] = answers[0]
+            else:
+                for j, answer in enumerate(answers, 1):
+                    self.row_data[f"{key}_{j}"] = answer
+
+            parsed += 1
 
     def _build_responses(self) -> Dict[str, Any]:
         """
