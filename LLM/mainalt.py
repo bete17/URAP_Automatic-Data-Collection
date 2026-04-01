@@ -61,7 +61,7 @@ def __main__():
     )
 
     end_index = prep.numRows if MAX_ROWS is None else min(prep.numRows, MAX_ROWS)
-    for row_index in range(5): #range(end_index):
+    for row_index in range(19, 24): #range(end_index):
         prep.getCompany(row_index)
         stem = prep.getFileName()
         item7_path = os.path.join(_RESTRUCTURING_7, f"{stem}_item7.txt")
@@ -99,8 +99,9 @@ def __main__():
                 completed8.add(item8_key)
             except Exception as e:
                 print(f"ERROR item8 for {name_key}: {e!r}")
-        log7.save_plots("log7_run.png")
-        log8.save_plots("log8_run.png")
+    
+    log7.save_plots("log7_run.png")
+    log8.save_plots("log8_run.png")
 
 
 __main__()
