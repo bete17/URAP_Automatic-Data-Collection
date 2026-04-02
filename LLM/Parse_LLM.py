@@ -129,7 +129,7 @@ class Export :
         corp = self.company
         return {
             "gvkey": str(corp.gvkey),
-            "cik": int(corp.cik),
+            "cik": str(corp.cik),
             "name": corp.corpName,
             "URL": corp.url,
             "item": self.item,
