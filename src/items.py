@@ -154,8 +154,10 @@ class Extract_Restructure:
         """
         soup = BeautifulSoup(html, 'html.parser')
 
-        item7_blocks = self.stream_until_stop(self.find_item7_tag(soup))
-        item8_blocks= self.stream_until_stop(self.find_item8_tag(soup))
+        item7_tag = self.find_item7_tag(soup)
+        item7_blocks = self.stream_until_stop(item7_tag) if item7_tag else []
+        item8_tag = self.find_item8_tag(soup)
+        item8_blocks = self.stream_until_stop(item8_tag) if item8_tag else []
 
         return ItemSections(
             item7_blocks=item7_blocks,
@@ -244,7 +246,7 @@ class Extract_Restructure:
         """
         
         # Normalize blocks first (safe to call with empty list)
-        blocks = self.stream_blocks(wanted_blocks or [])
+        blocks = wanted_blocks or []
 
         hits = []
         matches_indices = []  # To track blocks with keywords
