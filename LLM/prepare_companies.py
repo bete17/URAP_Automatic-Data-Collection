@@ -42,7 +42,7 @@ class preparation :
         self.index = index
         self.gvkey = self.df.iat[index, 0]
         self.cik = str(self.df.iat[index, 2]).zfill(10)
-        self.fyear = self.df.iat[index, 5]
+        self.fyear = int(self.df.iat[index, 5]) 
         self.corpName = self.df.iat[index, 1]
         self.name = f"{self.gvkey}_{self.fyear}"
         self.url = ""
