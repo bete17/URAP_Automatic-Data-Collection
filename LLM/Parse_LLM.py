@@ -36,6 +36,7 @@ class Export :
             'gvkey' : company.gvkey,
             'cik' : company.cik,
             'name' : company.name,
+            'fiscal_year': company.fyear,
             'URL' : company.url,
         }
         self._parse_text_to_cells() 
@@ -131,6 +132,7 @@ class Export :
             "gvkey": str(corp.gvkey),
             "cik": str(corp.cik),
             "name": corp.corpName,
+            "fiscal_year": int(corp.fyear),
             "URL": corp.url,
             "item": self.item,
             "responses": self._build_responses(),
