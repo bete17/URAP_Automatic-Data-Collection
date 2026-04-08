@@ -5,12 +5,14 @@ from LLM import LLM
 from prepare_companies import preparation
 from Parse_LLM import Export
 from logger import logger
+from jsonlToCsv import JsonlToCsv
 
 """
 Alternative main.py with logger and grapher
 """
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
+_EXPORT_DIR = os.path.join(_HERE, "..", "output")
 _RESTRUCTURING_7 = os.path.join(_DATA_DIR, "item7_restructuring")
 _RESTRUCTURING_8 = os.path.join(_DATA_DIR, "item8_restructuring")
 
@@ -100,9 +102,12 @@ def __main__():
             except Exception as e:
                 print(f"ERROR item8 for {name_key}: {e!r}")
     
+    csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
+    csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
     log7.save_plots("log7_run.png")
     log8.save_plots("log8_run.png")
-
+    csv7.convert()
+    csv8.convert()
 
 __main__()
 

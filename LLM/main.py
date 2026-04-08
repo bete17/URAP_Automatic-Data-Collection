@@ -4,6 +4,7 @@ import os
 from LLM import LLM
 from prepare_companies import preparation
 from Parse_LLM import Export
+from jsonlToCsv import JsonlToCsv
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
@@ -91,7 +92,10 @@ def __main__():
                 completed8.add(item8_key)
             except Exception as e:
                 print(f"ERROR item8 for {name_key}: {e!r}")
-
+    csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
+    csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
+    csv7.convert()
+    csv8.convert()
 
 __main__()
 
