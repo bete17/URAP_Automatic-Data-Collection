@@ -24,6 +24,18 @@ class Extract_Restructure:
         return s.strip()
 
     @staticmethod
+    def _block_to_plain_text(block: Block) -> str:
+        """Plain text for a paragraph or table block (tables use tab/newline layout)."""
+        if getattr(block, "type", None) == "paragraph":
+            return (block.text or "").strip()
+        if getattr(block, "type", None) == "table":
+            rows = block.rows or []
+            return "\n".join(
+                "\t".join((cell or "").strip() for cell in row) for row in rows
+            ).strip()
+        return ""
+
+    @staticmethod
     def stream_until_stop(start_tag):
         """Extract content from 'start_tag' until the next section item
 
@@ -269,7 +281,11 @@ class Extract_Restructure:
         for group in groups:
             start = max(0, group[0] -2)
             end = min(len(blocks), group[-1] + 3)
-            combined_block = " ".join(blocks[start:end]).strip()
+            parts = [
+                Extract_Restructure._block_to_plain_text(b)
+                for b in blocks[start:end]
+            ]
+            combined_block = "\n\n".join(p for p in parts if p).strip()
             hits.append({
                 "index": group[0],
                 "block": combined_block,
@@ -321,13 +337,13 @@ class Extract_Restructure:
             hits = self.capture_hits(normalized)
             for rec in hits:
                 block = rec.get("block")
-                if getattr(block, "type", None) == "paragraph":
+                if isinstance(block, str):
+                    text = block.strip()
+                elif getattr(block, "type", None) == "paragraph":
                     text = (block.text or "").strip()
                 elif getattr(block, "type", None) == "table":
                     rows = block.rows or []
                     text = "\n".join("\t".join(cell for cell in row if cell) for row in rows)
-                elif isinstance(block, str):
-                    text = block
                 else:
                     text = repr(block)
 
