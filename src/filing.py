@@ -33,7 +33,8 @@ class Extract_Filing:
             except requests.RequestException as e:
                 last_exc = e
                 time.sleep(self.retry_sleep)
-        raise last_exc
+        print(f"Warning: Failed to fetch {url} after {self.max_retries} retries: {last_exc}")
+        return None
     
     @staticmethod
     def build_meta(
@@ -68,7 +69,7 @@ class Extract_Filing:
         if df.empty:
             return None
         
-        acc_no = df['accession_number'].values[0].replace("-", "")
+        acc_no = df['accession_number'].values[0]
         primary_doc = df['primary_doc'].values[0]
         return self.build_meta(
             company=self.company,
@@ -77,11 +78,13 @@ class Extract_Filing:
             form="10-K",
             accession=acc_no,
             primary_doc=primary_doc,
-            report_date=fiscal_year,
+            report_date=df['report_date'].values[0] if 'report_date' in df.columns else None,
         )
     
-    def fetch_10k(self, meta: FilingMeta) -> str:
+    def fetch_10k(self, meta: FilingMeta) -> str | None:
         r = self.request_web(meta.url)
+        if r is None:
+            return None
         return r.text
                     
     def get_html(self, filepath: str) -> str | None:

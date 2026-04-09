@@ -24,6 +24,18 @@ class Extract_Restructure:
         return s.strip()
 
     @staticmethod
+    def _block_to_plain_text(block: Block) -> str:
+        """Plain text for a paragraph or table block (tables use tab/newline layout)."""
+        if getattr(block, "type", None) == "paragraph":
+            return (block.text or "").strip()
+        if getattr(block, "type", None) == "table":
+            rows = block.rows or []
+            return "\n".join(
+                "\t".join((cell or "").strip() for cell in row) for row in rows
+            ).strip()
+        return ""
+
+    @staticmethod
     def stream_until_stop(start_tag):
         """Extract content from 'start_tag' until the next section item
 
@@ -154,8 +166,10 @@ class Extract_Restructure:
         """
         soup = BeautifulSoup(html, 'html.parser')
 
-        item7_blocks = self.stream_until_stop(self.find_item7_tag(soup))
-        item8_blocks= self.stream_until_stop(self.find_item8_tag(soup))
+        item7_tag = self.find_item7_tag(soup)
+        item7_blocks = self.stream_until_stop(item7_tag) if item7_tag else []
+        item8_tag = self.find_item8_tag(soup)
+        item8_blocks = self.stream_until_stop(item8_tag) if item8_tag else []
 
         return ItemSections(
             item7_blocks=item7_blocks,
@@ -163,7 +177,7 @@ class Extract_Restructure:
             source_url=None,
         )
         
-    def stream_blocks(self, blocks: List[Block]):
+    def norm_blocks(self, blocks: List[Block]):
         """Normalize all the paragraphs and table
 
         Args:
@@ -193,22 +207,21 @@ class Extract_Restructure:
             bool: True or False
         """
         keywords = ["restructuring",
-                "reorganization",
-                "special charge",
+                "reorganizations?",
+                "special\s+charges?",
                 "realignment",
                 "repositioning",
-                "asset impairment",
-                "layoff cost",
-                "employee termination",
-                "workforce reduction"
+                "asset\s+impairment",
+                "layoff\s+costs?",
+                "employee\s+termination",
+                "workforce\s+reduction"
             ]
-        kws = [k.lower().strip() for k in keywords if k]
-        if not kws:
+        
+        if not keywords:
             return False
 
         # build regex that matches any keyword as a whole phrase
-        kws_pattern = r"|".join(re.escape(k) for k in kws)
-        pattern = re.compile(rf"\b(?:{kws_pattern})\b", re.I)
+        pattern = re.compile(r"\b(?:%s)\b" % "|".join(keywords), re.I)
 
         for block in blocks or []:
             if block is None:
@@ -229,7 +242,7 @@ class Extract_Restructure:
                 # Unknown block shape — skip
                 continue
 
-            if text and pattern.search(text):
+            if text and pattern.search(text.lower()):
                 return True
 
         return False
@@ -245,26 +258,62 @@ class Extract_Restructure:
         """
         
         # Normalize blocks first (safe to call with empty list)
-        blocks = self.stream_blocks(wanted_blocks or [])
+        blocks = wanted_blocks or []
 
         hits = []
-
+        matches_indices = []  # To track blocks with keywords
+        groups = [] 
+        #Go through each paragraphs and table and check for restructuring keywords
         for idx, block in enumerate(blocks):
             try:
                 if self.is_restructuring([block]):
-                    hits.append({
-                        "index": idx,
-                        "block": block,
-                    })
+                    matches_indices.append(idx)
             except Exception:
-                # Skip problematic blocks but continue processing
                 continue
-
+        
+        # Group nearby matches together (e.g., within 2 blocks of each other)
+        for idx in matches_indices:
+            if not groups:
+                groups.append([idx])
+            elif idx - groups[-1][-1] <= 2:
+                groups[-1].append(idx)
+            else:
+                groups.append([idx])
+        # Capture the blocks and combined all the blocks in each group
+        for group in groups:
+            start = max(0, group[0] -2)
+            end = min(len(blocks), group[-1] + 3)
+            parts = [
+                Extract_Restructure._block_to_plain_text(b)
+                for b in blocks[start:end]
+            ]
+            combined_block = "\n\n".join(p for p in parts if p).strip()
+            hits.append({
+                "index": group[0],
+                "block": combined_block,
+            })
         return hits
     
-    def merge_adjacent(self, blocks):
-        #Merge adjacent blocks into one larger block.
-        None
+    def merge_paragraph(self, blocks):
+        """
+        Merge restructuring blocks into one 
+        
+        Args:
+            blocks (List[Block]): A list of restructuring-related blocks to merge
+        
+        Returns:
+            Optional[Block]: A single merged block if the first block is a paragraph, otherwise None
+        """
+        if not blocks:
+            return None
+        
+        if getattr(blocks[0], "type", None) == "paragraph":
+            merged_text = " ".join((block.text or "") for block in blocks)
+            return Block(type="paragraph", text=merged_text)
+        
+        else:
+            return None
+
     
 
     def get_restructure(self, sections_or_html) -> List[str]:
@@ -286,17 +335,17 @@ class Extract_Restructure:
 
         for blocks in (sections.item7_blocks or [], sections.item8_blocks or []):
             # normalize blocks first
-            normalized = self.stream_blocks(blocks)
+            normalized = self.norm_blocks(blocks)
             hits = self.capture_hits(normalized)
             for rec in hits:
                 block = rec.get("block")
-                if getattr(block, "type", None) == "paragraph":
+                if isinstance(block, str):
+                    text = block.strip()
+                elif getattr(block, "type", None) == "paragraph":
                     text = (block.text or "").strip()
                 elif getattr(block, "type", None) == "table":
                     rows = block.rows or []
                     text = "\n".join("\t".join(cell for cell in row if cell) for row in rows)
-                elif isinstance(block, str):
-                    text = block
                 else:
                     text = repr(block)
 
