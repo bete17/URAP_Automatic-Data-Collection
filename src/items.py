@@ -24,6 +24,18 @@ class Extract_Restructure:
         return s.strip()
 
     @staticmethod
+    def _block_to_plain_text(block: Block) -> str:
+        """Plain text for a paragraph or table block (tables use tab/newline layout)."""
+        if getattr(block, "type", None) == "paragraph":
+            return (block.text or "").strip()
+        if getattr(block, "type", None) == "table":
+            rows = block.rows or []
+            return "\n".join(
+                "\t".join((cell or "").strip() for cell in row) for row in rows
+            ).strip()
+        return ""
+
+    @staticmethod
     def stream_until_stop(start_tag):
         """Extract content from 'start_tag' until the next section item
 
@@ -230,7 +242,7 @@ class Extract_Restructure:
                 # Unknown block shape — skip
                 continue
 
-            if text.lower() and pattern.search(text):
+            if text and pattern.search(text.lower()):
                 return True
 
         return False
@@ -271,16 +283,37 @@ class Extract_Restructure:
         for group in groups:
             start = max(0, group[0] -2)
             end = min(len(blocks), group[-1] + 3)
-            combined_block = " ".join(blocks[start:end]).strip()
+            parts = [
+                Extract_Restructure._block_to_plain_text(b)
+                for b in blocks[start:end]
+            ]
+            combined_block = "\n\n".join(p for p in parts if p).strip()
             hits.append({
                 "index": group[0],
                 "block": combined_block,
             })
         return hits
     
-    def merge_adjacent(self, blocks):
-        #Merge adjacent blocks into one larger block.
-        None
+    def merge_paragraph(self, blocks):
+        """
+        Merge restructuring blocks into one 
+        
+        Args:
+            blocks (List[Block]): A list of restructuring-related blocks to merge
+        
+        Returns:
+            Optional[Block]: A single merged block if the first block is a paragraph, otherwise None
+        """
+        if not blocks:
+            return None
+        
+        if getattr(blocks[0], "type", None) == "paragraph":
+            merged_text = " ".join((block.text or "") for block in blocks)
+            return Block(type="paragraph", text=merged_text)
+        
+        else:
+            return None
+
     
 
     def get_restructure(self, sections_or_html) -> List[str]:
@@ -306,13 +339,13 @@ class Extract_Restructure:
             hits = self.capture_hits(normalized)
             for rec in hits:
                 block = rec.get("block")
-                if getattr(block, "type", None) == "paragraph":
+                if isinstance(block, str):
+                    text = block.strip()
+                elif getattr(block, "type", None) == "paragraph":
                     text = (block.text or "").strip()
                 elif getattr(block, "type", None) == "table":
                     rows = block.rows or []
                     text = "\n".join("\t".join(cell for cell in row if cell) for row in rows)
-                elif isinstance(block, str):
-                    text = block
                 else:
                     text = repr(block)
 
