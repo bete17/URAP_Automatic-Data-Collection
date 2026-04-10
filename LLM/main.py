@@ -8,6 +8,7 @@ from jsonlToCsv import JsonlToCsv
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
+_EXPORT_DIR = os.path.join(_HERE, "..", "output")
 _RESTRUCTURING_7 = os.path.join(_DATA_DIR, "item7_restructuring")
 _RESTRUCTURING_8 = os.path.join(_DATA_DIR, "item8_restructuring")
 
