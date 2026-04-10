@@ -26,7 +26,7 @@ def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
     Each successful append writes one JSON object with ``name`` (gvkey_fyear) and ``item``
     (e.g. item7). Treat (name, item) as done so a restarted run skips those rows.
     """
-    done: set[tuple[str, str]] = set()
+    done: set[tuple[str, str, str]] = set()
     if not os.path.isfile(jsonl_path):
         return done
     with open(jsonl_path, "r", encoding="utf-8") as f:
@@ -38,7 +38,7 @@ def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
                 obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            name = obj.get("name")
+            name = obj.get("name") + "_" + str(obj.get("fiscal_year"))
             item = obj.get("item")
             if name is not None and item is not None:
                 done.add((str(name), str(item)))
@@ -63,6 +63,7 @@ def __main__():
         item7_path = os.path.join(_RESTRUCTURING_7, f"{stem}_item7.txt")
         item8_path = os.path.join(_RESTRUCTURING_8, f"{stem}_item8.txt")
         name_key = str(prep.name)
+        fyear = str(prep.fyear)
 
         print(f"row {row_index}/{prep.numRows - 1} {stem}")
 
@@ -93,6 +94,8 @@ def __main__():
                 completed8.add(item8_key)
             except Exception as e:
                 print(f"ERROR item8 for {name_key}: {e!r}")
+    
+    
     csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
     csv7.convert()

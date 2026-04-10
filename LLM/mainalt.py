@@ -42,9 +42,10 @@ def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
                 obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            name = obj.get("name")
+            name = obj.get("gvkey") + "_" + str(obj.get("fiscal_year"))
             item = obj.get("item")
-            if name is not None and item is not None:
+            fyear = obj.get("fiscal_year")
+            if name is not None and item is not None and fyear is not None:
                 done.add((str(name), str(item)))
     return done
 
@@ -68,7 +69,7 @@ def __main__():
         stem = prep.getFileName()
         item7_path = os.path.join(_RESTRUCTURING_7, f"{stem}_item7.txt")
         item8_path = os.path.join(_RESTRUCTURING_8, f"{stem}_item8.txt")
-        name_key = str(prep.name)
+        name_key = str(prep.name).strip()
 
         print(f"row {row_index}/{prep.numRows - 1} {stem}")
 
@@ -116,6 +117,7 @@ def convertOnly() :
     csv7.convert()
     csv8.convert()
 
-#__main__()
-convertOnly()
-
+__main__()
+#convertOnly()
+#testDone()
+#testComparison()
