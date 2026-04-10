@@ -42,9 +42,10 @@ def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
                 obj = json.loads(line)
             except json.JSONDecodeError:
                 continue
-            name = obj.get("name")
+            name = obj.get("gvkey") + "_" + str(obj.get("fiscal_year"))
             item = obj.get("item")
-            if name is not None and item is not None:
+            fyear = obj.get("fiscal_year")
+            if name is not None and item is not None and fyear is not None:
                 done.add((str(name), str(item)))
     return done
 
@@ -68,7 +69,7 @@ def __main__():
         stem = prep.getFileName()
         item7_path = os.path.join(_RESTRUCTURING_7, f"{stem}_item7.txt")
         item8_path = os.path.join(_RESTRUCTURING_8, f"{stem}_item8.txt")
-        name_key = str(prep.name)
+        name_key = str(prep.name).strip()
 
         print(f"row {row_index}/{prep.numRows - 1} {stem}")
 
@@ -106,16 +107,17 @@ def __main__():
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
     log7.save_plots("log7_run.png")
     log8.save_plots("log8_run.png")
-    csv7.convert()
-    csv8.convert()
+    csv7.convert(overwrite=False)
+    csv8.convert(overwrite=False)
 
 
 def convertOnly() :
     csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
-    csv7.convert()
-    csv8.convert()
+    csv7.convert(overwrite= False)
+    csv8.convert(overwrite= False)
 
 #__main__()
 convertOnly()
-
+#testDone()
+#testComparison()
