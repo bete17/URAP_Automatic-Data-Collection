@@ -98,8 +98,8 @@ def __main__():
     
     csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
-    csv7.convert()
-    csv8.convert()
+    csv7.convert(overwrite=False)
+    csv8.convert(overwrite=False)
 
 __main__()
 

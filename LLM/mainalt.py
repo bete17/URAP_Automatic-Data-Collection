@@ -107,17 +107,17 @@ def __main__():
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
     log7.save_plots("log7_run.png")
     log8.save_plots("log8_run.png")
-    csv7.convert()
-    csv8.convert()
+    csv7.convert(overwrite=False)
+    csv8.convert(overwrite=False)
 
 
 def convertOnly() :
     csv7 = JsonlToCsv(os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item7"))
     csv8 = JsonlToCsv(os.path.join(_DATA_DIR, "item8_responses_all_sample.jsonl"), os.path.join(_EXPORT_DIR, "item8"))
-    csv7.convert()
-    csv8.convert()
+    csv7.convert(overwrite= False)
+    csv8.convert(overwrite= False)
 
-__main__()
-#convertOnly()
+#__main__()
+convertOnly()
 #testDone()
 #testComparison()
