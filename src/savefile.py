@@ -16,7 +16,7 @@ class FileExporter:
             str: The gvkey corresponding to the given cik and year
         """
         sample_path = os.path.normpath(
-            os.path.join(os.path.dirname(__file__), "..", "data", "sample_all.csv")
+            os.path.join(os.path.dirname(__file__), "..", "data", "sample_companies", "sample_all.csv")
         )
 
         cik = str(self.cik).strip()

@@ -7,10 +7,10 @@ import glob
 
 def main():
     # FILE PATHS AND USER AGENT #
-    submission_path = os.path.join("data", "submission_info.csv")
-    sample_path = os.path.join("data", "sample_all.csv")
-    output_dir_7 = os.path.join("data", "item7_restructuring")
-    output_dir_8 = os.path.join("data", "item8_restructuring")
+    submission_path = os.path.join("data", "meta_data", "submission_info.csv")
+    sample_path = os.path.join("data", "sample_companies", "sample_all.csv")
+    output_dir_7 = os.path.join("data", "testing_data", "Automatic", "item7_restructuring")
+    output_dir_8 = os.path.join("data", "testing_data", "Automatic", "item8_restructuring")
     user_agent = os.getenv("SEC_USER_AGENT", "bruce0tan@gmail.com")
 
     submissions = pd.read_csv(submission_path, dtype={"cik": str})
