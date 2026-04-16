@@ -2,6 +2,7 @@
 import os
 import sys
 import unittest
+import tempfile
 import pandas as pd
 from unittest.mock import patch, MagicMock
 
@@ -10,6 +11,7 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 
 from filing import Extract_Filing, ARCHIVES_BASE
 from dataclass import FilingMeta
+from savefile import FileExporter
 
 
 class Testfiling(unittest.TestCase):
@@ -193,6 +195,23 @@ class Testfiling(unittest.TestCase):
 
         with patch.object(extractor, "get_submission", return_value=None):
             self.assertIsNone(extractor.get_html(self._csv_path))
+
+    def test_save_restructuring_filename_format(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            item7_dir = os.path.join(tmpdir, "item7")
+            item8_dir = os.path.join(tmpdir, "item8")
+            exporter = FileExporter(
+                output_dir_7=item7_dir,
+                output_dir_8=item8_dir,
+                cik="0000001750",
+                year=2023,
+            )
+
+            with patch.object(exporter, "get_gvkey", return_value="012345"):
+                exporter.save_restructuring(item7_hits=[], item8_hits=[])
+
+            self.assertTrue(os.path.exists(os.path.join(item7_dir, "012345_2023_item7.txt")))
+            self.assertTrue(os.path.exists(os.path.join(item8_dir, "012345_2023_item8.txt")))
 
 
 if __name__ == "__main__":

@@ -64,14 +64,15 @@ class FileExporter:
             None
         """
 
-        os.makedirs(self.output_dir, exist_ok=True)
+        os.makedirs(self.output_dir_7, exist_ok=True)
+        os.makedirs(self.output_dir_8, exist_ok=True)
 
-        gvkey = str(self.get_gvkey())
-        stem_parts = [p for p in [gvkey, str(self.year).strip()] if p]
-        stem = "_".join(stem_parts) if stem_parts else "export"
+        gvkey = (self.get_gvkey() or "").strip()
+        year = str(self.year).strip()
+        stem = f"{gvkey}_{year}" if gvkey else year
 
-        path7 = os.path.join(self.output_dir, f"{stem}_item7.txt")
-        path8 = os.path.join(self.output_dir, f"{stem}_item8.txt")
+        path7 = os.path.join(self.output_dir_7, f"{stem}_item7.txt")
+        path8 = os.path.join(self.output_dir_8, f"{stem}_item8.txt")
 
         self._write_hits(path7, item7_hits, section_label="ITEM 7")
         self._write_hits(path8, item8_hits, section_label="ITEM 8")
