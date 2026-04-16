@@ -65,8 +65,8 @@ class FileExporter:
 
         os.makedirs(self.output_dir, exist_ok=True)
 
-        gvkey = self.get_gvkey()
-        stem_parts = [p for p in [gvkey, str(self.cik).strip(), str(self.year).strip()] if p]
+        gvkey = str(self.get_gvkey())
+        stem_parts = [p for p in [gvkey, str(self.year).strip()] if p]
         stem = "_".join(stem_parts) if stem_parts else "export"
 
         path7 = os.path.join(self.output_dir, f"{stem}_item7.txt")
