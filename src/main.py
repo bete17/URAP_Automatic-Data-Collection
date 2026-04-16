@@ -30,7 +30,8 @@ def main():
         .to_dict()
     )
 
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir_7, exist_ok=True)
+    os.makedirs(output_dir_8, exist_ok=True)
 
     total = 0
     skipped = 0
@@ -75,7 +76,7 @@ def main():
             item7_hits = extractor.capture_hits(sections.item7_blocks or [])
             item8_hits = extractor.capture_hits(sections.item8_blocks or [])
 
-            exporter = FileExporter(output_dir=output_dir, cik=cik, year=year)
+            exporter = FileExporter(output_dir_7=output_dir_7, output_dir_8=output_dir_8, cik=cik, year=year)
             exporter.save_restructuring(item7_hits=item7_hits, item8_hits=item8_hits)
             success += 1
         except Exception as e:

@@ -3,8 +3,9 @@ import csv
 from typing import Any, Iterable, Optional
 
 class FileExporter:
-    def __init__(self, output_dir, cik, year):
-        self.output_dir = output_dir
+    def __init__(self, output_dir_7, output_dir_8, cik, year):
+        self.output_dir_7 = output_dir_7
+        self.output_dir_8 = output_dir_8
         self.cik = cik
         self.year = year
 
