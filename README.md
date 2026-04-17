@@ -25,6 +25,20 @@ We want to collect data of 20,000+ companies and we need to automate that proces
 
 6. Merge only after approval
 
+# How To Set Up Virtual Environment
+For Windows:
+1. Go to the terminal and navigate to the code directory
+2. run "python -m venv .venv"
+3. run ".\.venv\Scripts\Activate.ps1" to activate it
+4. then "pip install -r requirements.txt"
+
+For Mac:
+1. navigate to the code directory
+2. type "python3 -m venv .venv"
+3. type "source .venv/bin/activate"
+4. "pip install -r requirements.txt"
+
+
 
 
 ## Data
