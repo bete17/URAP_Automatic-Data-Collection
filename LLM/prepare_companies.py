@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 
 """
@@ -26,7 +27,10 @@ class preparation :
         Takes in a csvFileName and a starting index (optional)
         Set up a pandas dataframe
         """
-        self.df = pd.read_csv(csvFileName)
+        main_path = os.path.join("..", "data", "sample_companies", csvFileName)
+        meta_path = os.path.join("..", "data", "meta_data", "submission_info.csv")
+        self.df = pd.read_csv(main_path)
+        self.urlDf = pd.read_csv(meta_path)
         self.index = start
         self.numRows , _ = self.df.shape
         
@@ -47,11 +51,11 @@ class preparation :
         self.name = f"{self.gvkey}_{self.fyear}"
         self.url = ""
         try: 
-            self.getURL("submission_info.csv")
+            self.url = self.getURL()
         except:
             self.url = ""
 
-    def getURL(self, csvFileName: str) -> str:
+    def getURL(self) -> str:
         """
         Input: csvFileName containing the submission info
         Sets the self.url variable
@@ -72,11 +76,10 @@ class preparation :
         accession_clean = str(row['accession_number']).replace('-', '')
         primary_doc = str(row['primary_doc'])
 
-        self.url = (
+        return (
             f"https://www.sec.gov/ix?doc=/Archives/edgar/data/"
             f"{int(self.cik)}/{accession_clean}/{primary_doc}"
         )
-        return self.url
 
     def next(self) :
         #just incrementing
