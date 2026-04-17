@@ -205,7 +205,6 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-data/
 # ignore these
 data/meta_data/company_tickers.json
 data/meta_data/submissions.zip
