@@ -46,7 +46,37 @@ class preparation :
         self.corpName = self.df.iat[index, 1]
         self.name = f"{self.gvkey}_{self.fyear}"
         self.url = ""
+        try: 
+            self.getURL("submission_info.csv")
+        except:
+            self.url = ""
 
+    def getURL(self, csvFileName: str) -> str:
+        """
+        Input: csvFileName containing the submission info
+        Sets the self.url variable
+        Returns: a string of the URL
+        """
+        self.urlDf = pd.read_csv(csvFileName)
+
+        # Match on cik and fiscal_year
+        match = self.urlDf[
+            (self.urlDf['cik'] == int(self.cik)) &
+            (self.urlDf['fiscal_year'] == self.fyear)
+        ]
+
+        if match.empty:
+            raise ValueError(f"No URL found for CIK {self.cik}, fiscal year {self.fyear}")
+
+        row = match.iloc[0]
+        accession_clean = str(row['accession_number']).replace('-', '')
+        primary_doc = str(row['primary_doc'])
+
+        self.url = (
+            f"https://www.sec.gov/ix?doc=/Archives/edgar/data/"
+            f"{int(self.cik)}/{accession_clean}/{primary_doc}"
+        )
+        return self.url
 
     def next(self) :
         #just incrementing
