@@ -210,7 +210,11 @@ data/
 data/*
 
 # but keep these
-!data/submission_info.csv
-
-# if you also want to keep folders that contain kept files:
-!data/data/
+!data/meta_data/submission_info.csv
+!data/error_log
+!data/sample_companies
+!data/testing_data/Automatic/item7_LLM
+!data/testing_data/Automatic/item8_LLM
+!data/testing_data/Automatic/item7_restructuring
+!data/testing_data/Automatic/item8_restructuring
+!data/testing_data/Manual
