@@ -61,7 +61,6 @@ class preparation :
         Sets the self.url variable
         Returns: a string of the URL
         """
-        self.urlDf = pd.read_csv(csvFileName)
 
         # Match on cik and fiscal_year
         match = self.urlDf[
