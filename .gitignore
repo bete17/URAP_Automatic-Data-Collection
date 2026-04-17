@@ -206,16 +206,10 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 data/
-# ignore all data by default
-data/*
-
-# but keep 
-!data/.gitkeep
-!data/meta_data/submission_info.csv
-!data/error_log
-!data/sample_companies
-!data/testing_data/Automatic/item7_LLM
-!data/testing_data/Automatic/item8_LLM
-!data/testing_data/Automatic/item7_restructuring
-!data/testing_data/Automatic/item8_restructuring
-!data/testing_data/Manual
+# ignore these
+data/meta_data/company_tickers.json
+data/meta_data/submissions.zip
+data/Automatic/item7_LLM/*
+data/Automatic/item8_LLM/*
+data/Automatic/item7_restructuring/*
+data/Automatic/item8_restructuring/*
