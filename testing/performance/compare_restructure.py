@@ -88,18 +88,35 @@ def evaluate_pair(auto_text: str, manual_text: str) -> Dict[str, float]:
         "length_ratio": length_ratio(auto_text, manual_text),
     }
 
-def get_auto_restructure(filepath, fyear, gvkey) -> List[str]:
-    return None
+def get_auto_restructure(filepath, fyear, gvkey, item_type):
+    filepath = os.path.join(filepath, f"{gvkey}_{fyear}_{item_type}.txt")
+    if not os.path.exists(filepath):
+        raise FileNotFoundError("file not found")
+    with open(filepath, "r") as f:
+        text = f.read()
+    if not text.strip():
+        raise ValueError("file is empty")
+    return text
 
-def get_manual_restructure(filepath, fyear, gvkey) -> List[str]:
-    return None
+def get_manual_restructure(filepath, fyear, gvkey, item_type):
+    filepath = os.path.join(filepath, f"{gvkey}_{fyear}_{item_type}.txt")
+    if not os.path.exists(filepath):
+        raise FileNotFoundError("file not found")
+    with open(filepath, "r") as f:
+        text = f.read()
+    if not text.strip():
+        raise ValueError("file is empty")
+    return text
 
 def main() -> None:
-
-   auto_restructure = get_auto_restructure(filepath_auto, fyear1, gvkey1)
-   manual_restructure = get_manual_restructure(filepath_manual, fyear2, gvkey2)
-   metrics = evaluate_pair(auto_restructure, manual_restructure)
-   print(metrics)
+    filepath_auto = os.path.join("data", "testing_data", "Automatic", "item7_restructuring")
+    filepath_manual = os.path.join("data", "testing_data", "Manual", "item7_restructuring")
+    fyear1, gvkey1, item_type1 = "2023", "1014", "item7"
+    fyear2, gvkey2, item_type2 = "2023", "1012", "item7"
+    auto_restructure = get_auto_restructure(filepath_auto, fyear1, gvkey1, item_type1)
+    manual_restructure = get_manual_restructure(filepath_manual, fyear2, gvkey2, item_type2)
+    metrics = evaluate_pair(normalize_text(auto_restructure), normalize_text(manual_restructure))
+    print(metrics)
 
 
 if __name__ == "__main__":
