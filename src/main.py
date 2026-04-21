@@ -52,8 +52,8 @@ def main():
         total += 1
 
         # Resume behavior: if both output files already exist for this cik/year, skip.
-        item7_existing = glob.glob(os.path.join(output_dir_7, f"*{gvkey}_{year}_item7.txt"))
-        item8_existing = glob.glob(os.path.join(output_dir_8, f"*{gvkey}_{year}_item8.txt"))
+        item7_existing = glob.glob(os.path.join(output_dir_7, f"*{cik}_{year}_item7.txt"))
+        item8_existing = glob.glob(os.path.join(output_dir_8, f"*{cik}_{year}_item8.txt"))
         if item7_existing and item8_existing:
             skipped += 1
             continue

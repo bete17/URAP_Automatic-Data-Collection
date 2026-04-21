@@ -1,6 +1,7 @@
 import re
 from collections import Counter
 from typing import Dict, List
+import os
 
 
 def normalize_text(text: str) -> str:
@@ -86,3 +87,20 @@ def evaluate_pair(auto_text: str, manual_text: str) -> Dict[str, float]:
         "shared_word_pct": shared_word_percentage(auto_text, manual_text),
         "length_ratio": length_ratio(auto_text, manual_text),
     }
+
+def get_auto_restructure(filepath, fyear, gvkey) -> List[str]:
+    return None
+
+def get_manual_restructure(filepath, fyear, gvkey) -> List[str]:
+    return None
+
+def main() -> None:
+
+   auto_restructure = get_auto_restructure(filepath_auto, fyear1, gvkey1)
+   manual_restructure = get_manual_restructure(filepath_manual, fyear2, gvkey2)
+   metrics = evaluate_pair(auto_restructure, manual_restructure)
+   print(metrics)
+
+
+if __name__ == "__main__":
+    main()
