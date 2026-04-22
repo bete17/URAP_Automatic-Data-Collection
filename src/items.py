@@ -54,8 +54,8 @@ class Extract_Restructure:
                 continue
 
             # Stop when we hit the next section heading
-            t = el.get_text(" ", strip=True)
-            if re.match(r"^\s*item\s*(7a|8|9)\b", t, re.I):
+            t = el.get_text(" ", strip=True).replace("\xa0", " ").replace("\u00a0", " ").strip()
+            if re.match(r"^\s*item\s*(7a|8|9)\b", t, re.I) and len(t) < 200:
                 break
 
             # Skip obvious non-content
@@ -98,19 +98,21 @@ class Extract_Restructure:
         """
         candidates = []
         #find all the relevant tags
-        for b in soup.find_all(["b", "strong"]):
+        for b in soup.find_all(["b", "strong", "div", "font", "td", "p", "span"]):
             txt = b.get_text(" ", strip=True)
-            if re.match(r"^\s*item\s*7\b", txt, re.I):
+            if re.match(r"^\s*item\s*7\b", txt, re.I) and len(txt) < 200:
                 candidates.append(b)
+
+        # Option 1: Use anchor tags (most reliable)
+        for a in soup.find_all("a", attrs={"name": True}):
+            name = a.get("name", "")
+            if re.search(r"item.?7(?!a)", name, re.I):
+                return a
 
         best_tag = None
         best_len = 0
 
         for tag in candidates:
-            # skip TOC (Table Of Contents) entries
-            if tag.find_parent(["ul", "ol", "table"]):
-                continue
-
             # slice forward until 7A/8/9
             collected= Extract_Restructure.stream_until_stop(tag)
             if len(collected) > best_len:
@@ -128,19 +130,21 @@ class Extract_Restructure:
             Tag: The tag representing the item 8 heading
         """
         candidates = []
-        for b in soup.find_all(["b", "strong"]):
+        for b in soup.find_all(["b", "strong", "div", "font", "td", "p", "span"]):
             txt = b.get_text(" ", strip=True)
-            if re.match(r"^\s*item\s*8\b", txt, re.I):
+            if re.match(r"^\s*item\s*8\b", txt, re.I) and len(txt) < 200:
                 candidates.append(b)
+
+        # Option 1: Use anchor tags (most reliable)
+        for a in soup.find_all("a", attrs={"name": True}):
+            name = a.get("name", "")
+            if re.search(r"item.?8", name, re.I):
+                return a
 
         best_tag = None
         best_len = 0
 
         for tag in candidates:
-            # skip TOC entries
-            if tag.find_parent(["ul", "ol", "table"]):
-                continue
-
             # slice forward until item 9
             collected = Extract_Restructure.stream_until_stop(tag)
             # find the tag with the most content
@@ -206,15 +210,18 @@ class Extract_Restructure:
         Returns:
             bool: True or False
         """
-        keywords = ["restructuring",
-                "reorganizations?",
-                "special\s+charges?",
-                "realignment",
-                "repositioning",
-                "asset\s+impairment",
-                "layoff\s+costs?",
-                "employee\s+termination",
-                "workforce\s+reduction"
+        keywords = [
+                r"restructur",
+                r"reorganization",
+                r"special charges?",
+                r"re-?align",
+                r"repositioning",
+                r"asset impairment",
+                r"impairment charges?",
+                r"divestiture",
+                r"layoff",
+                r"employee termination",
+                r"workforce reduction",
             ]
         
         if not keywords:
