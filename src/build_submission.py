@@ -6,9 +6,12 @@ import pandas as pd
 
 rows = []
     
-sample = pd.read_csv("data/sample_all.csv", dtype={"cik": str})
-sample = sample[sample['big05_rstr'] == True]
+full_sample = pd.read_csv("data/sample_all.csv", dtype={"cik": str})
+sample = full_sample[full_sample['big05_rstr'] == True]
+sample_gvkey = sample[['gvkey', 'cik']]
 ciks_in_sample = sample['cik'].unique().tolist()
+
+missing_ciks = []
 
 
 with zipfile.ZipFile("data/submissions.zip", "r") as z:
@@ -28,7 +31,7 @@ with zipfile.ZipFile("data/submissions.zip", "r") as z:
             continue
         cik = match.group(1)
         if cik not in ciks_in_sample:
-            missing_cik.append(cik)
+            missing_ciks.append(cik)
             continue
         # Decide how to access "recent" structure
         if "filings" in data and "recent" in data["filings"]:
@@ -65,4 +68,5 @@ with zipfile.ZipFile("data/submissions.zip", "r") as z:
         count += 1
             
 df = pd.DataFrame(rows)
+df = df.merge(sample_gvkey, on='cik', how='left')
 df.to_csv("data/submission_info.csv", index=False)

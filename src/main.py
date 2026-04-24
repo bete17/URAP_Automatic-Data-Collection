@@ -6,11 +6,11 @@ import os
 import glob
 
 def main():
-    submission_path = os.path.join("data", "submission_info.csv")
-    sample_path = os.path.join("data", "sample_all.csv")
-    output_dir_7 = os.path.join("data", "item7_restructuring")
-    output_dir_8 = os.path.join("data", "item8_restructuring")
-
+    # FILE PATHS AND USER AGENT #
+    submission_path = os.path.join("data", "meta_data", "submission_info.csv")
+    sample_path = os.path.join("data", "sample_companies", "sample_all.csv")
+    output_dir_7 = os.path.join("data", "testing_data", "Automatic", "item7_restructuring")
+    output_dir_8 = os.path.join("data", "testing_data", "Automatic", "item8_restructuring")
     user_agent = os.getenv("SEC_USER_AGENT", "bruce0tan@gmail.com")
 
     submissions = pd.read_csv(submission_path, dtype={"cik": str})
@@ -30,7 +30,8 @@ def main():
         .to_dict()
     )
 
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir_7, exist_ok=True)
+    os.makedirs(output_dir_8, exist_ok=True)
 
     total = 0
     skipped = 0
@@ -75,7 +76,7 @@ def main():
             item7_hits = extractor.capture_hits(sections.item7_blocks or [])
             item8_hits = extractor.capture_hits(sections.item8_blocks or [])
 
-            exporter = FileExporter(output_dir=output_dir, cik=cik, year=year)
+            exporter = FileExporter(output_dir_7=output_dir_7, output_dir_8=output_dir_8, cik=cik, year=year)
             exporter.save_restructuring(item7_hits=item7_hits, item8_hits=item8_hits)
             success += 1
         except Exception as e:
