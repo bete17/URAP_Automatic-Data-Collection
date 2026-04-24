@@ -9,8 +9,8 @@ from jsonlToCsv import JsonlToCsv
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_HERE, "..", "data")
 _EXPORT_DIR = os.path.join(_HERE, "..", "output")
-_RESTRUCTURING_7 = os.path.join(_DATA_DIR, "item7_restructuring")
-_RESTRUCTURING_8 = os.path.join(_DATA_DIR, "item8_restructuring")
+_RESTRUCTURING_7 = os.path.join(_DATA_DIR, "testing_data", "item7")
+_RESTRUCTURING_8 = os.path.join(_DATA_DIR, "testing_data", "item8")
 
 # Where the JSONL files are stored (one file per item type).
 OUTPUT_JSONL7 = os.path.join(_DATA_DIR, "item7_responses_all_sample.jsonl")
@@ -47,7 +47,7 @@ def _load_completed_keys(jsonl_path: str) -> set[tuple[str, str]]:
 
 def __main__():
 
-    sample_csv = os.path.join(_DATA_DIR, "sample_collect_2025Fall.csv")
+    sample_csv = os.path.join(_DATA_DIR, "sample_companies", "sample_collect_2025Fall.csv")
     prep = preparation(sample_csv)
     completed7 = _load_completed_keys(OUTPUT_JSONL7)
     completed8 = _load_completed_keys(OUTPUT_JSONL8)

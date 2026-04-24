@@ -27,8 +27,10 @@ class preparation :
         Takes in a csvFileName and a starting index (optional)
         Set up a pandas dataframe
         """
-        main_path = os.path.join("..", "data", "sample_companies", csvFileName)
-        meta_path = os.path.join("..", "data", "meta_data", "submission_info.csv")
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+
+        main_path = os.path.join(base_dir, "..", "data", "sample_companies", csvFileName)
+        meta_path = os.path.join(base_dir, "..", "data", "meta_data", "submission_info.csv")
         self.df = pd.read_csv(main_path)
         self.urlDf = pd.read_csv(meta_path)
         self.index = start
