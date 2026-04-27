@@ -4,8 +4,33 @@ from savefile import FileExporter
 import pandas as pd
 import os
 import glob
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Extract restructuring text for a controlled subset of filings."
+    )
+    parser.add_argument(
+        "start-row:",
+        type=int,
+        default=0,
+        help="0-based row index in submission_info.csv to start from (default: 0).",
+    )
+    parser.add_argument(
+        "num_companies:",
+        type=int,
+        default=None,
+        help="Maximum number of valid company-year rows to process (default: no limit).",
+    )
+    return parser.parse_args()
 
 def main():
+    args = parse_args()
+    start_row = max(0, args.start_row)
+    max_companies = args.max_companies
+    if max_companies is not None and max_companies < 0:
+        raise ValueError("--max-companies must be >= 0")
+
     # FILE PATHS AND USER AGENT #
     submission_path = os.path.join("data", "meta_data", "submission_info.csv")
     sample_path = os.path.join("data", "sample_companies", "sample_all.csv")
@@ -40,7 +65,12 @@ def main():
 
     extractor = Extract_Restructure()
 
-    for row in submissions.itertuples(index=False):
+    for idx, row in enumerate(submissions.itertuples(index=False)):
+        if idx < start_row:
+            continue
+        if max_companies is not None and total >= max_companies:
+            break
+
         cik = str(row.cik).zfill(10)
         year = row.fiscal_year
         primary_doc = getattr(row, "primary_doc", None)
@@ -83,6 +113,10 @@ def main():
             failed += 1
             print(f"[FAIL] cik={cik}, year={year}: {e}")
 
+    if max_companies is not None:
+        print(f"Run window: start_row={start_row}, max_companies={max_companies}")
+    else:
+        print(f"Run window: start_row={start_row}, max_companies=ALL")
     print(f"Processed: {total}")
     print(f"Skipped (already collected): {skipped}")
     print(f"Succeeded: {success}")
