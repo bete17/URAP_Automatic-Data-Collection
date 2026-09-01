@@ -1,0 +1,11 @@
+[project]
+name = "urap-code"
+version = "0.1.0"
+description = "SEC 10-K data collection and LLM pipeline"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas",
+    "requests",
+    "beautifulsoup4",
+    "ollama",
+]
